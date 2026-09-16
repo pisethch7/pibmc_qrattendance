@@ -18,6 +18,18 @@
 
       <div class="grid grid-cols-2 sm:flex sm:items-center gap-2.5 sm:gap-3">
         <button
+          @click="openTelegramModal"
+          class="px-3.5 sm:px-4 py-2.5 rounded-xl glass-card hover:bg-slate-800 text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700/80 active:scale-95 transition-all flex items-center justify-center space-x-2"
+          title="Telegram Bot status and test message"
+        >
+          <span class="relative flex h-2.5 w-2.5">
+            <span v-if="telegramStatus?.configured && telegramStatus?.api_reachable" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5" :class="telegramStatus?.configured && telegramStatus?.api_reachable ? 'bg-emerald-500' : 'bg-amber-500'"></span>
+          </span>
+          <span>Telegram</span>
+        </button>
+
+        <button
           @click="showCreateCourseModal = true"
           class="px-3.5 sm:px-4 py-2.5 rounded-xl glass-card hover:bg-slate-800 text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700/80 active:scale-95 transition-all flex items-center justify-center space-x-1.5 sm:space-x-2"
         >
@@ -545,6 +557,117 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal: Telegram Bot Diagnostics & Test -->
+    <div v-if="showTelegramModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md">
+      <div class="glass-panel w-full max-w-lg p-5 sm:p-7 rounded-3xl border border-slate-800 shadow-2xl relative max-h-[90vh] flex flex-col overflow-y-auto">
+        <button @click="showTelegramModal = false" class="absolute top-5 right-5 text-slate-400 hover:text-white active:scale-90 transition-transform">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+
+        <div class="flex items-center space-x-3 mb-4">
+          <div class="w-10 h-10 rounded-2xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-2.02 1.28-5.7 3.77-.54.37-1.03.55-1.47.54-.48-.01-1.41-.27-2.1-.5-.85-.28-1.52-.43-1.46-.91.03-.25.38-.51 1.05-.78 4.12-1.79 6.87-2.98 8.25-3.56 3.93-1.64 4.74-1.92 5.27-1.93.12 0 .37.03.54.17.14.12.18.28.2.45-.02.07-.02.18-.03.26z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-white font-['Outfit']">
+              Telegram Bot Integration
+            </h3>
+            <p class="text-xs text-slate-400">
+              Live notifications for session QR codes and student check-ins
+            </p>
+          </div>
+        </div>
+
+        <!-- Loading -->
+        <div v-if="telegramLoading" class="py-10 text-center text-slate-400 text-xs">
+          Checking Telegram bot connectivity...
+        </div>
+
+        <div v-else class="space-y-4">
+          <!-- Status Banner -->
+          <div
+            class="p-4 rounded-2xl border flex items-start space-x-3"
+            :class="telegramStatus?.configured && telegramStatus?.api_reachable ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-amber-500/10 border-amber-500/30'"
+          >
+            <div class="mt-0.5">
+              <span v-if="telegramStatus?.configured && telegramStatus?.api_reachable" class="text-emerald-400 text-lg">✅</span>
+              <span v-else class="text-amber-400 text-lg">⚠️</span>
+            </div>
+            <div class="flex-1 text-xs">
+              <div class="font-bold text-white mb-0.5">
+                {{ telegramStatus?.configured && telegramStatus?.api_reachable ? 'Telegram Bot Connected & Ready' : 'Configuration Attention Needed' }}
+              </div>
+              <div class="text-slate-300">
+                <span v-if="telegramStatus?.configured && telegramStatus?.api_reachable">
+                  Bot <strong>@{{ telegramStatus?.bot_info?.username }}</strong> is connected to chat ID <code>{{ telegramStatus?.chat_id }}</code>.
+                </span>
+                <span v-else-if="!telegramStatus?.bot_token_set">
+                  Bot Token is missing in Environment Variables!
+                </span>
+                <span v-else-if="!telegramStatus?.api_reachable">
+                  Cannot reach Telegram: {{ telegramStatus?.error }}
+                </span>
+                <span v-else>
+                  Chat ID is missing in Environment Variables!
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Configuration Details -->
+          <div class="bg-slate-900/70 p-3.5 rounded-2xl border border-slate-800 space-y-2 text-xs">
+            <div class="flex justify-between py-1 border-b border-slate-800/60">
+              <span class="text-slate-400">Bot Token</span>
+              <span class="font-mono text-slate-200">{{ telegramStatus?.bot_token_preview || 'Not set' }}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-800/60">
+              <span class="text-slate-400">Target Chat ID</span>
+              <span class="font-mono text-slate-200">{{ telegramStatus?.chat_id || 'Not set' }}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-800/60">
+              <span class="text-slate-400">Bot Username</span>
+              <span class="font-semibold text-sky-400">{{ telegramStatus?.bot_info?.username ? '@' + telegramStatus?.bot_info?.username : 'Unknown' }}</span>
+            </div>
+            <div class="flex justify-between py-1">
+              <span class="text-slate-400">PHP GD Extension</span>
+              <span :class="telegramStatus?.gd_installed ? 'text-emerald-400' : 'text-amber-400'">{{ telegramStatus?.gd_installed ? 'Loaded (Local GD)' : 'Using Fallback API' }}</span>
+            </div>
+          </div>
+
+          <!-- Send Test Button -->
+          <div class="pt-1">
+            <button
+              @click="handleSendTelegramTest"
+              :disabled="testSending || !telegramStatus?.configured"
+              class="w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 disabled:opacity-50 text-white font-semibold text-xs shadow-lg shadow-sky-500/20 active:scale-98 transition-all flex items-center justify-center space-x-2"
+            >
+              <svg v-if="testSending" class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+              <span>{{ testSending ? 'Sending Test Message...' : 'Send Test Notification to Telegram' }}</span>
+            </button>
+            <p v-if="testResult" class="mt-2 text-center text-xs" :class="testResult.success ? 'text-emerald-400' : 'text-rose-400'">
+              {{ testResult.message }}
+            </p>
+          </div>
+
+          <!-- Laravel Cloud Instructions -->
+          <div class="p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800 text-[11px] text-slate-400 space-y-1.5">
+            <div class="font-semibold text-slate-300">⚙️ Laravel Cloud Setup Check:</div>
+            <div>In your <strong>Laravel Cloud Dashboard → Environment → Variables</strong>, ensure these are configured:</div>
+            <div class="font-mono bg-slate-900 p-2 rounded-lg text-[10px] text-slate-300 select-all overflow-x-auto">
+              TELEGRAM_ENABLED=true<br/>
+              TELEGRAM_BOT_TOKEN=8975196350:AAH-W910saKAb2LCYOu-ATQAShbJJxJ9qYQ<br/>
+              TELEGRAM_CHAT_ID=5536919758
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -563,6 +686,49 @@ const loading = ref(true);
 const showCreateCourseModal = ref(false);
 const showStartSessionModal = ref(false);
 const showEnrollModal = ref(false);
+const showTelegramModal = ref(false);
+
+const telegramLoading = ref(false);
+const telegramStatus = ref(null);
+const testSending = ref(false);
+const testResult = ref(null);
+
+const fetchTelegramStatus = async () => {
+  try {
+    telegramLoading.value = true;
+    const { data } = await api.get('/telegram/status');
+    telegramStatus.value = data.data;
+  } catch (err) {
+    console.error('Failed to fetch Telegram status:', err);
+  } finally {
+    telegramLoading.value = false;
+  }
+};
+
+const openTelegramModal = () => {
+  testResult.value = null;
+  showTelegramModal.value = true;
+  fetchTelegramStatus();
+};
+
+const handleSendTelegramTest = async () => {
+  testSending.value = true;
+  testResult.value = null;
+  try {
+    const { data } = await api.post('/telegram/test');
+    testResult.value = {
+      success: true,
+      message: data.message || 'Test message sent successfully to Telegram!',
+    };
+  } catch (err) {
+    testResult.value = {
+      success: false,
+      message: err.response?.data?.message || err.message || 'Failed to send test message.',
+    };
+  } finally {
+    testSending.value = false;
+  }
+};
 
 const startingSession = ref(false);
 const startSessionError = ref('');
@@ -631,6 +797,7 @@ const fetchData = async () => {
 
 onMounted(() => {
   fetchData();
+  fetchTelegramStatus();
 });
 
 const setCampusPreset = () => {

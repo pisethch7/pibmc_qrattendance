@@ -75,6 +75,103 @@ class TelegramService
         return preg_replace('/([_*\[\]()~`>#+\-=|{}.!\\\\])/', '\\\\$1', $text) ?? $text;
     }
 
+    /**
+     * Get detailed configuration status and diagnostics.
+     */
+    public function getStatus(): array
+    {
+        $botSet  = !empty($this->botToken) && $this->botToken !== 'your_bot_token_here';
+        $chatSet = !empty($this->chatId) && $this->chatId !== 'your_chat_id_here';
+
+        $preview = '';
+        if ($botSet) {
+            $len = strlen($this->botToken);
+            $preview = substr($this->botToken, 0, 4) . '...' . substr($this->botToken, -4);
+        }
+
+        $botInfo = null;
+        $apiReachable = false;
+        $error = null;
+
+        if ($botSet) {
+            try {
+                $response = Http::timeout(6)->connectTimeout(4)->get("{$this->apiUrl}{$this->botToken}/getMe");
+                if ($response->successful() && ($response->json('ok') === true)) {
+                    $apiReachable = true;
+                    $botInfo = $response->json('result');
+                } else {
+                    $error = $response->json('description') ?? 'Telegram getMe failed with HTTP ' . $response->status();
+                }
+            } catch (\Throwable $e) {
+                $error = 'Could not reach Telegram API: ' . $e->getMessage();
+            }
+        }
+
+        return [
+            'enabled'             => $this->enabled,
+            'configured'          => $this->isConfigured(),
+            'bot_token_set'       => $botSet,
+            'bot_token_preview'   => $preview,
+            'chat_id_set'         => $chatSet,
+            'chat_id'             => $this->chatId,
+            'gd_installed'        => extension_loaded('gd'),
+            'api_reachable'       => $apiReachable,
+            'bot_info'            => $botInfo,
+            'error'               => $error,
+        ];
+    }
+
+    /**
+     * Send a test text message to verify Telegram bot setup.
+     */
+    public function sendTestMessage(?string $customText = null): array
+    {
+        if (!$this->isConfigured()) {
+            return [
+                'success' => false,
+                'message' => 'Telegram is not configured. Please set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in your environment variables.',
+            ];
+        }
+
+        try {
+            $serverName = config('app.name', 'PIBMC Attendance');
+            $serverUrl  = config('app.url', 'localhost');
+            $time       = now()->setTimezone('Asia/Phnom_Penh')->format('d M Y, H:i:s');
+
+            $text = $customText ?? "🔔 *Telegram Bot Connection Test*\n\n✅ *System:* {$serverName}\n🌐 *Server URL:* {$serverUrl}\n⏰ *Time:* {$time}\n\nYour Telegram integration is working properly!";
+
+            $response = Http::timeout(10)->connectTimeout(5)->post("{$this->apiUrl}{$this->botToken}/sendMessage", [
+                'chat_id'    => $this->chatId,
+                'text'       => $text,
+                'parse_mode' => 'Markdown',
+            ]);
+
+            if (!$response->successful()) {
+                $body = $response->json();
+                $desc = $body['description'] ?? $response->body();
+                Log::warning("TelegramService: sendTestMessage failed — {$desc}");
+                return [
+                    'success' => false,
+                    'message' => "Telegram API error: {$desc}",
+                ];
+            }
+
+            Log::info("TelegramService: sendTestMessage succeeded.");
+            return [
+                'success' => true,
+                'message' => 'Test message sent successfully to Telegram!',
+                'result'  => $response->json('result'),
+            ];
+
+        } catch (\Throwable $e) {
+            Log::error("TelegramService: sendTestMessage exception — {$e->getMessage()}");
+            return [
+                'success' => false,
+                'message' => 'Exception while sending to Telegram: ' . $e->getMessage(),
+            ];
+        }
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // Public API
     // ─────────────────────────────────────────────────────────────────────────
@@ -87,7 +184,7 @@ class TelegramService
     public function sendSessionQR(AttendanceSession $session, string $token): void
     {
         if (!$this->isConfigured()) {
-            Log::info('TelegramService: skipped — not configured.');
+            Log::warning('TelegramService: sendSessionQR skipped — Telegram credentials not set. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID.');
             return;
         }
 
@@ -122,7 +219,9 @@ class TelegramService
 
             $pngBytes = $this->generateQrPng($token);
 
-            $response = Http::attach('photo', $pngBytes, "session_{$session->id}_qr.png")
+            $response = Http::timeout(12)
+                ->connectTimeout(5)
+                ->attach('photo', $pngBytes, "session_{$session->id}_qr.png")
                 ->post("{$this->apiUrl}{$this->botToken}/sendPhoto", [
                     'chat_id'    => $this->chatId,
                     'caption'    => $caption,
@@ -149,6 +248,7 @@ class TelegramService
     public function sendCheckInNotification(AttendanceRecord $record): void
     {
         if (!$this->isConfigured()) {
+            Log::warning('TelegramService: sendCheckInNotification skipped — Telegram credentials not set. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID.');
             return;
         }
 
@@ -184,11 +284,13 @@ class TelegramService
                 '🔍 *Method:* QR Scan',
             ]);
 
-            $response = Http::post("{$this->apiUrl}{$this->botToken}/sendMessage", [
-                'chat_id'    => $this->chatId,
-                'text'       => $message,
-                'parse_mode' => 'MarkdownV2',
-            ]);
+            $response = Http::timeout(8)
+                ->connectTimeout(5)
+                ->post("{$this->apiUrl}{$this->botToken}/sendMessage", [
+                    'chat_id'    => $this->chatId,
+                    'text'       => $message,
+                    'parse_mode' => 'MarkdownV2',
+                ]);
 
             if (!$response->successful()) {
                 Log::warning("TelegramService: sendMessage failed — {$response->body()}");

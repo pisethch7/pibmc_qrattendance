@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\SendTelegramCheckIn;
 use App\Services\AttendanceService;
+use App\Services\TelegramService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -12,6 +12,7 @@ class AttendanceCheckInController extends Controller
 {
     public function __construct(
         protected AttendanceService $attendanceService,
+        protected TelegramService $telegramService,
     ) {}
 
     /**
@@ -54,9 +55,8 @@ class AttendanceCheckInController extends Controller
             clientIp: $clientIp
         );
 
-        // Dispatch after response — sends notification immediately after student gets response,
-        // without delaying check-in UI or requiring a separate queue worker process.
-        SendTelegramCheckIn::dispatchAfterResponse($record->id);
+        // Send check-in alert directly to Telegram bot (safe non-blocking execution)
+        $this->telegramService->sendCheckInNotification($record);
 
         return response()->json([
             'success' => true,

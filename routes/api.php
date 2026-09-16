@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AttendanceSessionController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\EnrollmentController;
+use App\Http\Controllers\Api\TelegramController;
 use Illuminate\Support\Facades\Route;
 
 // Public Auth Endpoints
@@ -13,6 +14,9 @@ Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
 });
+
+// Telegram diagnostics (public status check)
+Route::get('/telegram/status', [TelegramController::class, 'status']);
 
 // Protected Endpoints
 Route::middleware('auth:sanctum')->group(function () {
@@ -44,4 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/attendance/records/{record}', [AttendanceRecordController::class, 'update']);
     Route::post('/attendance/sessions/{session}/manual-record', [AttendanceRecordController::class, 'manualRecord']);
     Route::get('/attendance/students/{student}/history', [AttendanceRecordController::class, 'studentHistory']);
+
+    // Telegram live test
+    Route::post('/telegram/test', [TelegramController::class, 'test']);
 });
