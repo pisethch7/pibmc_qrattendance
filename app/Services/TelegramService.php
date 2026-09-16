@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\AttendanceRecord;
 use App\Models\AttendanceSession;
+use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
 use chillerlan\QRCode\Output\QRGdImagePNG;
@@ -43,16 +44,27 @@ class TelegramService
      */
     protected function generateQrPng(string $tokenString): string
     {
-        $options = new QROptions([
-            'outputInterface' => QRGdImagePNG::class,
-            'eccLevel'        => QRCode::ECC_H,
-            'scale'           => 12,
-            'addQuietzone'    => true,
-            'quietzoneSize'   => 4,
-        ]);
+        if (extension_loaded('gd')) {
+            $options = new QROptions([
+                'outputInterface' => QRGdImagePNG::class,
+                'eccLevel'        => EccLevel::H,
+                'scale'           => 12,
+                'outputBase64'    => false,
+                'addQuietzone'    => true,
+                'quietzoneSize'   => 4,
+            ]);
 
-        // render() returns raw PNG bytes when no $file path is given
-        return (string) (new QRCode($options))->render($tokenString);
+            return (string) (new QRCode($options))->render($tokenString);
+        }
+
+        // Robust fallback if PHP GD extension is missing on server/cloud
+        $url = 'https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=' . urlencode($tokenString);
+        $response = Http::timeout(10)->get($url);
+        if ($response->successful()) {
+            return $response->body();
+        }
+
+        throw new \RuntimeException('Unable to generate QR code: ext-gd is not loaded and fallback service failed.');
     }
 
     /**

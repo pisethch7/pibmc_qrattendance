@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendTelegramSessionQR;
 use App\Models\AttendanceSession;
 use App\Models\AttendanceToken;
 use App\Models\Course;
 use App\Services\AttendanceService;
-use App\Services\TelegramService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -15,7 +15,6 @@ class AttendanceSessionController extends Controller
 {
     public function __construct(
         protected AttendanceService $attendanceService,
-        protected TelegramService $telegramService,
     ) {}
 
     /**
@@ -80,8 +79,9 @@ class AttendanceSessionController extends Controller
 
         $token = $this->attendanceService->generateToken($session);
 
-        // Notify Telegram bot with QR code photo (non-blocking; errors are logged internally)
-        $this->telegramService->sendSessionQR($session, $token->token);
+        // Dispatch after response — sends QR image immediately after response is sent to teacher,
+        // without blocking teacher UI or requiring a separate queue worker process.
+        SendTelegramSessionQR::dispatchAfterResponse($session->id, $token->token);
 
         return response()->json([
             'message' => 'Attendance session started.',
