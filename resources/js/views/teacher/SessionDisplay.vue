@@ -1,34 +1,34 @@
 <template>
-  <div class="min-h-[calc(100vh-4rem)] p-4 sm:p-6 lg:p-8 flex flex-col space-y-6">
+  <div class="min-h-[calc(100vh-4rem)] p-3 sm:p-6 lg:p-8 flex flex-col space-y-4 sm:space-y-6">
     <!-- Top Bar -->
-    <div class="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 flex flex-wrap items-center justify-between gap-4">
+    <div class="glass-panel p-3.5 sm:p-5 rounded-3xl border border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3.5 sm:gap-4">
       <div class="flex items-center space-x-3">
-        <router-link to="/teacher" class="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-colors">
+        <router-link to="/teacher" class="p-2 sm:p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white active:scale-95 transition-all">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
         </router-link>
 
         <div>
           <div class="flex items-center space-x-2">
             <span class="inline-block w-2.5 h-2.5 rounded-full" :class="isSessionOpen ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'"></span>
-            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">
               {{ isSessionOpen ? 'Live Rotating QR Session' : 'Session Ended' }}
             </span>
           </div>
-          <h1 class="text-xl sm:text-2xl font-extrabold text-white font-['Outfit']">
+          <h1 class="text-lg sm:text-2xl font-extrabold text-white font-['Outfit'] truncate max-w-[240px] sm:max-w-md">
             {{ session?.course?.name || 'Loading Course...' }}
           </h1>
         </div>
       </div>
 
-      <div class="flex items-center space-x-3">
+      <div class="flex flex-wrap items-center gap-2 sm:space-x-3">
         <!-- Verification Mode Badge -->
-        <div v-if="session?.verification_mode === 'wifi'" class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-teal-500/10 border border-teal-500/30 text-xs text-teal-300">
-          <svg class="w-4 h-4 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
-          <span>Option 2: <strong>School WiFi</strong></span>
+        <div v-if="session?.verification_mode === 'wifi'" class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-teal-500/10 border border-teal-500/30 text-xs text-teal-300">
+          <svg class="w-3.5 h-3.5 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
+          <span>WiFi Mode</span>
         </div>
-        <div v-else class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-xs text-indigo-300">
-          <svg class="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-          <span>Option 1: <strong>Location ({{ session?.radius_meters || 100 }}m)</strong></span>
+        <div v-else class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-xs text-indigo-300">
+          <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span>GPS ({{ session?.radius_meters || 100 }}m)</span>
         </div>
 
         <!-- Export QR to JPG Button -->
@@ -36,22 +36,22 @@
           v-if="isSessionOpen"
           @click="exportQrToJpg"
           :disabled="exportingJpg"
-          class="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 text-xs font-semibold shadow-sm hover:border-indigo-500 transition-colors"
+          class="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 text-xs font-semibold shadow-sm hover:border-indigo-500 active:scale-95 transition-all"
           title="Export QR Code as JPG image"
         >
           <svg class="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
-          <span>Export JPG</span>
+          <span class="hidden sm:inline">Export</span> JPG
         </button>
 
         <!-- Fullscreen Toggle -->
         <button
           @click="toggleFullscreen"
-          class="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-colors"
+          class="p-2 sm:p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 active:scale-95 transition-all"
           title="Toggle Fullscreen Projector"
         >
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
           </svg>
         </button>
@@ -60,7 +60,7 @@
         <button
           v-if="isSessionOpen"
           @click="closeSession"
-          class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold shadow-md shadow-rose-600/30 transition-colors"
+          class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold shadow-md shadow-rose-600/30 active:scale-95 transition-all"
         >
           Close Session
         </button>
@@ -68,9 +68,9 @@
     </div>
 
     <!-- Main Grid: Left Rotating QR & Countdown, Right Live Roster -->
-    <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-      <!-- QR Code Projector Card (7 Cols) -->
-      <div class="lg:col-span-7 glass-panel p-6 sm:p-10 rounded-3xl border border-slate-800 flex flex-col items-center justify-center text-center relative overflow-hidden">
+    <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
+      <!-- QR Code Projector Card (7 Cols on desktop/tablet) -->
+      <div class="lg:col-span-7 glass-panel p-5 sm:p-10 rounded-3xl border border-slate-800 flex flex-col items-center justify-center text-center relative overflow-hidden">
         <div v-if="!isSessionOpen" class="text-center py-16 space-y-4">
           <div class="w-20 h-20 mx-auto rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500">
             <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
@@ -94,8 +94,8 @@
           </div>
 
           <!-- QR Canvas Container with Glow -->
-          <div class="relative p-6 rounded-3xl bg-white shadow-2xl shadow-indigo-500/20 flex items-center justify-center">
-            <canvas ref="qrCanvas" class="rounded-xl w-64 h-64 sm:w-80 sm:h-80"></canvas>
+          <div class="relative p-4 sm:p-6 rounded-3xl bg-white shadow-2xl shadow-indigo-500/20 flex items-center justify-center max-w-[90vw]">
+            <canvas ref="qrCanvas" class="rounded-xl w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 max-w-full aspect-square"></canvas>
           </div>
 
           <!-- Export to JPG Quick Action -->

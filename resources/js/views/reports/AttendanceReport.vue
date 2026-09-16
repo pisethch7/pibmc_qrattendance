@@ -105,20 +105,78 @@
       </div>
     </div>
 
-    <!-- Roster Details Table -->
+    <!-- Roster Details: Mobile Cards & Desktop Table -->
     <div class="glass-panel rounded-3xl border border-slate-800 overflow-hidden">
-      <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+      <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between">
         <div>
           <h3 class="text-base font-bold text-white font-['Outfit']">
             Session Attendance & Audit Trail
           </h3>
-          <p class="text-xs text-slate-400" v-if="currentSession">
-            Session started {{ formatDateTime(currentSession.started_at) }} • Classroom geofence: {{ currentSession.latitude }}°, {{ currentSession.longitude }}° (±{{ currentSession.radius_meters }}m)
+          <p class="text-xs text-slate-400 mt-0.5" v-if="currentSession">
+            Session: {{ formatDateTime(currentSession.started_at) }} • {{ currentSession.verification_mode === 'wifi' ? 'WiFi Subnet' : `GPS Geofence (±${currentSession.radius_meters}m)` }}
           </p>
         </div>
       </div>
 
-      <div class="overflow-x-auto">
+      <!-- Phone View (App Cards) -->
+      <div class="block sm:hidden divide-y divide-slate-800/80">
+        <div
+          v-for="st in filteredRoster"
+          :key="st.student_id"
+          class="p-4 space-y-2.5 bg-slate-950/40"
+        >
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-center space-x-2.5 min-w-0">
+              <div class="w-8 h-8 rounded-xl bg-slate-800 text-slate-200 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                {{ st.name?.charAt(0) || 'S' }}
+              </div>
+              <div class="min-w-0">
+                <div class="font-semibold text-sm text-white truncate">{{ st.name }}</div>
+                <div class="text-[11px] text-slate-400 truncate">{{ st.email }}</div>
+              </div>
+            </div>
+
+            <span
+              class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex-shrink-0"
+              :class="getStatusBadgeClass(st.status)"
+            >
+              {{ st.status }}
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-400 pt-1">
+            <div class="flex items-center space-x-1">
+              <span class="text-slate-500">Time:</span>
+              <span class="text-slate-200 font-mono">{{ st.checked_in_at ? formatTime(st.checked_in_at) : '—' }}</span>
+            </div>
+            <div class="flex items-center space-x-1">
+              <span class="text-slate-500">Method:</span>
+              <span v-if="st.method" class="uppercase font-bold text-[10px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-300">{{ st.method }}</span>
+              <span v-else>—</span>
+            </div>
+          </div>
+
+          <div v-if="st.latitude && st.longitude" class="text-[10px] font-mono text-slate-500">
+            GPS: {{ st.latitude.toFixed(5) }}°, {{ st.longitude.toFixed(5) }}°
+          </div>
+
+          <div v-if="isTeacher" class="pt-2 flex justify-end">
+            <button
+              @click="openOverrideModal(st)"
+              class="px-3 py-1.5 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/20 text-xs font-semibold active:scale-95 transition-all"
+            >
+              Override Status
+            </button>
+          </div>
+        </div>
+
+        <div v-if="filteredRoster.length === 0" class="py-12 text-center text-slate-400 text-xs">
+          No matching student attendance records found.
+        </div>
+      </div>
+
+      <!-- Tablet & Desktop View (Full Table) -->
+      <div class="hidden sm:block overflow-x-auto">
         <table class="w-full text-left text-xs">
           <thead class="bg-slate-900/80 border-b border-slate-800 text-slate-400 uppercase tracking-wider font-semibold">
             <tr>

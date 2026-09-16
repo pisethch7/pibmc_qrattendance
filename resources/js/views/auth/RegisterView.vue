@@ -1,19 +1,17 @@
 <template>
-  <div class="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 relative overflow-hidden">
+  <div class="min-h-[calc(100vh-5rem)] flex items-center justify-center px-3 sm:px-6 lg:px-8 py-6 sm:py-12 relative overflow-hidden">
     <div class="absolute top-1/4 right-1/2 translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-600/15 rounded-full blur-3xl pointer-events-none"></div>
 
     <div class="w-full max-w-md relative z-10">
-      <div class="glass-panel p-8 sm:p-10 rounded-2xl shadow-2xl border border-slate-800/80">
-        <div class="text-center mb-8">
-          <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-500 shadow-xl shadow-purple-500/30 mb-4">
-            <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-            </svg>
+      <div class="glass-panel p-6 sm:p-10 rounded-3xl shadow-2xl border border-slate-800/80">
+        <div class="text-center mb-6 sm:mb-8">
+          <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white shadow-xl shadow-blue-900/30 mb-3 sm:mb-4 overflow-hidden">
+            <img :src="logoUrl" alt="PIBMC Logo" class="w-full h-full object-contain p-1" />
           </div>
-          <h2 class="text-2xl font-bold tracking-tight text-white font-['Outfit']">
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white font-['Outfit']">
             Create an Account
           </h2>
-          <p class="mt-2 text-sm text-slate-400">
+          <p class="mt-1 sm:mt-2 text-xs sm:text-sm text-slate-400">
             Join the smart attendance portal
           </p>
         </div>
@@ -128,6 +126,8 @@ import { useAuth } from '../../stores/auth';
 
 const router = useRouter();
 const { register, isTeacher } = useAuth();
+
+const logoUrl = '/Institute_logo.png';
 
 const form = reactive({
   name: '',

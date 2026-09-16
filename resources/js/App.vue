@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
     <Navbar />
 
-    <main class="flex-1 pb-16 md:pb-8">
+    <main class="flex-1 pb-24 sm:pb-20 md:pb-8">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />

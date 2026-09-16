@@ -45,6 +45,68 @@ body {
     box-shadow: 0 0 40px -10px rgba(244, 63, 94, 0.35);
 }
 
+/* Mobile touch optimization & Ergonomics */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+button, a, input, select, textarea {
+    touch-action: manipulation;
+}
+
+/* iOS Safe Area insets */
+.pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+}
+.pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+}
+.bottom-safe {
+    bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Scanner Laser Line Animation */
+@keyframes laserSweep {
+    0% {
+        top: 8%;
+        opacity: 0.9;
+    }
+    50% {
+        top: 88%;
+        opacity: 1;
+    }
+    100% {
+        top: 8%;
+        opacity: 0.9;
+    }
+}
+
+.scanner-laser {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #10b981, #34d399, #10b981, transparent);
+    box-shadow: 0 0 16px 3px rgba(16, 185, 129, 0.8), 0 0 6px 1px rgba(52, 211, 153, 0.9);
+    animation: laserSweep 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    border-radius: 9999px;
+    pointer-events: none;
+    z-index: 20;
+}
+
+/* Mobile App Bar Blur */
+.mobile-nav-blur {
+    background: rgba(9, 13, 22, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
     width: 6px;
@@ -60,3 +122,4 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(148, 163, 184, 0.6);
 }
+

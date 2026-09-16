@@ -1,25 +1,25 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8">
     <!-- Top Header -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <div class="flex items-center space-x-3">
-          <h1 class="text-3xl font-extrabold tracking-tight text-white font-['Outfit']">
+        <div class="flex items-center space-x-2.5">
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white font-['Outfit']">
             Teacher Dashboard
           </h1>
-          <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-            Instructor Portal
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+            Instructor
           </span>
         </div>
-        <p class="mt-1 text-sm text-slate-400">
+        <p class="mt-1 text-xs sm:text-sm text-slate-400">
           Manage courses, enroll students, and launch live rotating QR attendance sessions
         </p>
       </div>
 
-      <div class="flex items-center space-x-3">
+      <div class="grid grid-cols-2 sm:flex sm:items-center gap-2.5 sm:gap-3">
         <button
           @click="showCreateCourseModal = true"
-          class="px-4 py-2.5 rounded-xl glass-card hover:bg-slate-800 text-slate-200 text-sm font-semibold border border-slate-700/80 transition-colors flex items-center space-x-2"
+          class="px-3.5 sm:px-4 py-2.5 rounded-xl glass-card hover:bg-slate-800 text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700/80 active:scale-95 transition-all flex items-center justify-center space-x-1.5 sm:space-x-2"
         >
           <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -29,7 +29,7 @@
 
         <button
           @click="openStartSessionModal()"
-          class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-sm font-semibold shadow-lg shadow-indigo-500/25 transition-all flex items-center space-x-2"
+          class="px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-indigo-500/25 active:scale-95 transition-all flex items-center justify-center space-x-1.5 sm:space-x-2"
         >
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
@@ -40,8 +40,8 @@
       </div>
     </div>
 
-    <!-- Active Sessions Banner (if any) -->
-    <div v-if="activeSessions.length > 0" class="p-5 rounded-2xl bg-gradient-to-r from-indigo-950/80 via-purple-950/50 to-slate-900 border border-indigo-500/30 glow-indigo">
+    <!-- Active Sessions Banner (iOS Live Activity Style) -->
+    <div v-if="activeSessions.length > 0" class="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-indigo-950/80 via-purple-950/50 to-slate-900 border border-indigo-500/40 glow-indigo">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div class="flex items-center space-x-3.5">
           <span class="relative flex h-3 w-3">
@@ -49,29 +49,29 @@
             <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
           </span>
           <div>
-            <div class="text-xs font-semibold text-indigo-400 uppercase tracking-wider">
+            <div class="text-[11px] font-bold text-indigo-300 uppercase tracking-wider">
               Live Attendance Session Active
             </div>
-            <div class="text-base font-bold text-white">
+            <div class="text-sm sm:text-base font-bold text-white">
               {{ activeSessions[0].course?.name }}
             </div>
           </div>
         </div>
 
-        <div class="flex items-center space-x-3">
+        <div class="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:space-x-3">
           <router-link
             :to="`/teacher/session/${activeSessions[0].id}`"
-            class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-colors flex items-center space-x-1.5 shadow-md shadow-indigo-600/30"
+            class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all flex items-center justify-center space-x-1.5 shadow-md shadow-indigo-600/30 active:scale-95"
           >
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
-            <span>Open Projector Screen</span>
+            <span>Open Screen</span>
           </router-link>
 
           <button
             @click="closeSession(activeSessions[0].id)"
-            class="px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-semibold transition-colors"
+            class="px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-semibold active:scale-95 transition-all text-center"
           >
             End Session
           </button>
@@ -79,8 +79,8 @@
       </div>
     </div>
 
-    <!-- Metrics Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+    <!-- Metrics Cards (Responsive on Phone and Tablet) -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5">
       <div class="glass-panel p-6 rounded-2xl border border-slate-800">
         <div class="flex items-center justify-between">
           <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Courses Taught</span>
@@ -198,16 +198,16 @@
     </div>
 
     <!-- Modal: Start Session -->
-    <div v-if="showStartSessionModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
-      <div class="glass-panel w-full max-w-lg p-6 sm:p-8 rounded-2xl border border-slate-800 shadow-2xl relative">
-        <button @click="showStartSessionModal = false" class="absolute top-5 right-5 text-slate-400 hover:text-white">
+    <div v-if="showStartSessionModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md">
+      <div class="glass-panel w-full max-w-lg p-5 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+        <button @click="showStartSessionModal = false" class="absolute top-5 right-5 text-slate-400 hover:text-white active:scale-90 transition-transform">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
-        <h3 class="text-xl font-bold text-white font-['Outfit'] mb-2">
+        <h3 class="text-xl font-bold text-white font-['Outfit'] mb-1">
           Start Attendance Session
         </h3>
-        <p class="text-xs text-slate-400 mb-6">
+        <p class="text-xs text-slate-400 mb-5">
           Set up geofence boundary coordinates and launch rotating QR projector screen
         </p>
 
@@ -233,7 +233,7 @@
             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
               Presence Verification Method
             </label>
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
               <!-- Option 1: Location -->
               <button
                 type="button"
@@ -416,16 +416,16 @@
     </div>
 
     <!-- Modal: Create Course -->
-    <div v-if="showCreateCourseModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
-      <div class="glass-panel w-full max-w-md p-6 sm:p-8 rounded-2xl border border-slate-800 shadow-2xl relative">
-        <button @click="showCreateCourseModal = false" class="absolute top-5 right-5 text-slate-400 hover:text-white">
+    <div v-if="showCreateCourseModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md">
+      <div class="glass-panel w-full max-w-md p-5 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+        <button @click="showCreateCourseModal = false" class="absolute top-5 right-5 text-slate-400 hover:text-white active:scale-90 transition-transform">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
-        <h3 class="text-xl font-bold text-white font-['Outfit'] mb-2">
+        <h3 class="text-xl font-bold text-white font-['Outfit'] mb-1">
           Create New Course
         </h3>
-        <p class="text-xs text-slate-400 mb-6">
+        <p class="text-xs text-slate-400 mb-5">
           Add a course section to start enrolling students and tracking attendance
         </p>
 
@@ -475,9 +475,9 @@
     </div>
 
     <!-- Modal: Manage Students & Enrollment -->
-    <div v-if="showEnrollModal && selectedCourse" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
-      <div class="glass-panel w-full max-w-xl p-6 sm:p-8 rounded-2xl border border-slate-800 shadow-2xl relative max-h-[90vh] flex flex-col">
-        <button @click="showEnrollModal = false" class="absolute top-5 right-5 text-slate-400 hover:text-white">
+    <div v-if="showEnrollModal && selectedCourse" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md">
+      <div class="glass-panel w-full max-w-xl p-5 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl relative max-h-[90vh] flex flex-col">
+        <button @click="showEnrollModal = false" class="absolute top-5 right-5 text-slate-400 hover:text-white active:scale-90 transition-transform">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
@@ -491,14 +491,14 @@
         </div>
 
         <!-- Enroll New Student Form -->
-        <div class="my-5 p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+        <div class="my-4 sm:my-5 p-3.5 sm:p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
           <div class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
             Enroll New Student
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <select
               v-model="newStudentId"
-              class="flex-1 px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-white text-xs focus:outline-none"
+              class="flex-1 px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:outline-none"
             >
               <option value="">-- Select Student --</option>
               <option
@@ -513,7 +513,7 @@
             <button
               @click="handleEnrollStudent"
               :disabled="!newStudentId"
-              class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold whitespace-nowrap"
+              class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold whitespace-nowrap active:scale-95 transition-all text-center"
             >
               Enroll
             </button>

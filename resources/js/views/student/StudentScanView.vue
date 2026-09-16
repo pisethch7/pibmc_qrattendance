@@ -183,25 +183,49 @@
           </button>
         </div>
 
-        <div class="relative w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 min-h-[260px] flex items-center justify-center">
+        <div class="relative w-full rounded-3xl overflow-hidden bg-slate-900 border border-slate-800/80 min-h-[280px] sm:min-h-[340px] flex items-center justify-center shadow-2xl">
           <div id="qr-reader" class="w-full"></div>
 
-          <!-- Camera Placeholder when stopped -->
-          <div v-if="!cameraRunning" class="text-center p-6 space-y-3">
-            <div class="w-12 h-12 mx-auto rounded-xl bg-slate-800 flex items-center justify-center text-slate-400">
-              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
+          <!-- Native App Viewfinder Overlay when Camera is Running -->
+          <div v-if="cameraRunning" class="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
+            <div class="relative w-56 h-56 sm:w-64 sm:h-64 border border-emerald-500/20 rounded-3xl overflow-hidden">
+              <!-- Corner Brackets -->
+              <div class="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-emerald-400 rounded-tl-xl shadow-sm"></div>
+              <div class="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-emerald-400 rounded-tr-xl shadow-sm"></div>
+              <div class="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-emerald-400 rounded-bl-xl shadow-sm"></div>
+              <div class="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-emerald-400 rounded-br-xl shadow-sm"></div>
+              <!-- Moving Laser Line -->
+              <div class="scanner-laser"></div>
             </div>
-            <p class="text-xs text-slate-400 max-w-xs">
-              Point your camera at the screen's rotating QR code
-            </p>
+          </div>
+
+          <!-- Camera Placeholder when stopped -->
+          <div v-if="!cameraRunning" class="text-center p-6 sm:p-8 space-y-4">
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-800/90 border border-slate-700/60 flex items-center justify-center text-slate-400 shadow-inner">
+              <svg class="w-7 h-7 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-white">Camera Viewfinder Ready</h3>
+              <p class="text-xs text-slate-400 max-w-xs mx-auto mt-1">
+                Point your phone camera directly at the classroom screen's rotating QR code
+              </p>
+            </div>
             <button
               type="button"
               @click="startCamera"
-              class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md shadow-emerald-600/25"
+              class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white text-xs font-bold shadow-lg shadow-emerald-500/25 active:scale-95 transition-all"
             >
-              Enable Camera Scanner
+              Start Camera Scanner
             </button>
           </div>
+        </div>
+
+        <!-- Scanning Instruction Pill -->
+        <div v-if="cameraRunning" class="flex items-center justify-center">
+          <span class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 animate-pulse">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span>Camera active • Align QR inside green frame</span>
+          </span>
         </div>
       </div>
 
