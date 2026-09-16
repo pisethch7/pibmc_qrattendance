@@ -7,13 +7,15 @@ use App\Models\AttendanceSession;
 use App\Models\AttendanceToken;
 use App\Models\Course;
 use App\Services\AttendanceService;
+use App\Services\TelegramService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AttendanceSessionController extends Controller
 {
     public function __construct(
-        protected AttendanceService $attendanceService
+        protected AttendanceService $attendanceService,
+        protected TelegramService $telegramService,
     ) {}
 
     /**
@@ -77,6 +79,9 @@ class AttendanceSessionController extends Controller
         ]);
 
         $token = $this->attendanceService->generateToken($session);
+
+        // Notify Telegram bot with QR code photo (non-blocking; errors are logged internally)
+        $this->telegramService->sendSessionQR($session, $token->token);
 
         return response()->json([
             'message' => 'Attendance session started.',

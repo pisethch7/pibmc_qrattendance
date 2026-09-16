@@ -4,13 +4,15 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\AttendanceService;
+use App\Services\TelegramService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AttendanceCheckInController extends Controller
 {
     public function __construct(
-        protected AttendanceService $attendanceService
+        protected AttendanceService $attendanceService,
+        protected TelegramService $telegramService,
     ) {}
 
     /**
@@ -52,6 +54,9 @@ class AttendanceCheckInController extends Controller
             longitude: $lon,
             clientIp: $clientIp
         );
+
+        // Notify Telegram bot with student check-in details (non-blocking; errors are logged internally)
+        $this->telegramService->sendCheckInNotification($record);
 
         return response()->json([
             'success' => true,
