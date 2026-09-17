@@ -59,7 +59,7 @@
         <!-- Close Session Button -->
         <button
           v-if="isSessionOpen"
-          @click="closeSession"
+          @click="showCloseModal = true"
           class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold shadow-md shadow-rose-600/30 active:scale-95 transition-all"
         >
           Close Session
@@ -70,22 +70,25 @@
     <!-- Main Grid: Left Rotating QR & Countdown, Right Live Roster -->
     <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
       <!-- QR Code Projector Card (7 Cols on desktop/tablet) -->
-      <div class="lg:col-span-7 glass-panel p-5 sm:p-10 rounded-3xl border border-slate-800 flex flex-col items-center justify-center text-center relative overflow-hidden">
-        <div v-if="!isSessionOpen" class="text-center py-16 space-y-4">
-          <div class="w-20 h-20 mx-auto rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500">
+      <div class="lg:col-span-7 glass-panel p-5 sm:p-10 rounded-3xl border border-indigo-500/30 glow-indigo flex flex-col items-center justify-center text-center relative overflow-hidden">
+        <div class="absolute -top-12 -left-12 w-48 h-48 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-12 -right-12 w-48 h-48 bg-purple-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div v-if="!isSessionOpen" class="text-center py-16 space-y-4 relative z-10">
+          <div class="w-20 h-20 mx-auto rounded-full bg-slate-900/90 border border-slate-800 flex items-center justify-center text-slate-500 shadow-inner">
             <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
           </div>
           <h2 class="text-2xl font-bold text-white font-['Outfit']">This Session is Closed</h2>
           <p class="text-sm text-slate-400 max-w-sm">No new scans will be accepted. You can still view or adjust the final attendance report.</p>
-          <router-link to="/reports" class="inline-block px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/25">
+          <router-link to="/reports" class="inline-block px-5 py-2.5 rounded-xl btn-primary-gradient text-white text-xs font-bold shadow-lg">
             View Final Report
           </router-link>
         </div>
 
-        <div v-else class="w-full flex flex-col items-center">
+        <div v-else class="w-full flex flex-col items-center relative z-10">
           <!-- Instruction -->
           <div class="mb-6 text-center">
-            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+            <span class="px-3.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 shadow-sm">
               Scan with phone camera or PIBMC app
             </span>
             <p class="mt-2 text-xs text-slate-400">
@@ -94,16 +97,16 @@
           </div>
 
           <!-- QR Canvas Container with Glow -->
-          <div class="relative p-4 sm:p-6 rounded-3xl bg-white shadow-2xl shadow-indigo-500/20 flex items-center justify-center max-w-[90vw]">
+          <div class="relative p-5 sm:p-7 rounded-3xl bg-white shadow-2xl shadow-indigo-500/40 ring-8 ring-white/10 flex items-center justify-center max-w-[90vw]">
             <canvas ref="qrCanvas" class="rounded-xl w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 max-w-full aspect-square"></canvas>
           </div>
 
           <!-- Export to JPG Quick Action -->
-          <div class="mt-4 flex items-center justify-center">
+          <div class="mt-5 flex items-center justify-center">
             <button
               type="button"
               @click="exportQrToJpg"
-              class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 text-xs font-medium transition-all shadow-sm"
+              class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700 hover:border-indigo-500/50 text-xs font-semibold transition-all shadow-md active:scale-95"
             >
               <svg class="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -140,7 +143,7 @@
       </div>
 
       <!-- Live Roster & Attendance Feed (5 Cols) -->
-      <div class="lg:col-span-5 glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col justify-between">
+      <div class="lg:col-span-5 glass-panel p-6 rounded-3xl border border-white/[0.08] shadow-2xl flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between pb-4 border-b border-slate-800">
             <div>
@@ -264,6 +267,45 @@
         </div>
       </div>
     </div>
+
+    <!-- Confirm End Session Modal -->
+    <div v-if="showCloseModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+      <div class="glass-panel w-full max-w-sm p-6 rounded-3xl border border-slate-800 shadow-2xl relative space-y-4">
+        <div class="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 mx-auto">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <div class="text-center space-y-1">
+          <h3 class="text-lg font-bold text-white font-['Outfit']">End Attendance Session?</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            No further student scans or check-ins will be accepted once closed. You will still be able to review and adjust records.
+          </p>
+        </div>
+        <div class="grid grid-cols-2 gap-3 pt-2">
+          <button
+            type="button"
+            @click="showCloseModal = false"
+            :disabled="closingSession"
+            class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-300"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            @click="confirmCloseSession"
+            :disabled="closingSession"
+            class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-semibold text-white shadow-lg shadow-rose-600/30 flex items-center justify-center space-x-1.5"
+          >
+            <svg v-if="closingSession" class="w-3.5 h-3.5 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+            </svg>
+            <span>{{ closingSession ? 'Ending...' : 'Yes, End Session' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -271,13 +313,17 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import QRCode from 'qrcode';
+import { useToast } from '../../composables/useToast';
 import api from '../../services/api';
 
 const route = useRoute();
 const sessionId = route.params.id;
+const { showToast } = useToast();
 
 const session = ref(null);
 const isSessionOpen = ref(true);
+const showCloseModal = ref(false);
+const closingSession = ref(false);
 const currentTokenString = ref('');
 const secondsRemaining = ref(3600);
 const totalValidity = ref(3600);
@@ -380,21 +426,25 @@ onUnmounted(() => {
   if (rosterPollInterval) clearInterval(rosterPollInterval);
 });
 
-const closeSession = async () => {
-  if (!confirm('Are you sure you want to end this attendance session?')) return;
+const confirmCloseSession = async () => {
+  closingSession.value = true;
   try {
     await api.post(`/attendance/sessions/${sessionId}/close`);
     isSessionOpen.value = false;
+    showCloseModal.value = false;
+    showToast('Attendance session ended successfully', 'info');
     await fetchReport();
   } catch (err) {
-    alert('Failed to close session: ' + (err.response?.data?.message || err.message));
+    showToast('Failed to close session: ' + (err.response?.data?.message || err.message), 'error');
+  } finally {
+    closingSession.value = false;
   }
 };
 
 const toggleFullscreen = () => {
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen().catch((err) => {
-      alert(`Error attempting to enable fullscreen: ${err.message}`);
+      showToast(`Error attempting to enable fullscreen: ${err.message}`, 'warning');
     });
   } else {
     document.exitFullscreen();
@@ -414,9 +464,10 @@ const submitOverride = async (newStatus) => {
       status: newStatus,
     });
     showOverrideModal.value = false;
+    showToast(`Updated ${selectedStudent.value.name}'s status to ${newStatus}`, 'success');
     await fetchReport();
   } catch (err) {
-    alert('Failed to update status: ' + (err.response?.data?.message || err.message));
+    showToast('Failed to update status: ' + (err.response?.data?.message || err.message), 'error');
   }
 };
 
@@ -552,9 +603,10 @@ const exportQrToJpg = () => {
     link.download = `PIBMC_QR_${safeTitle}_${Date.now()}.jpg`;
     link.href = jpgUrl;
     link.click();
+    showToast('Exported classroom QR code to JPG', 'success');
   } catch (err) {
     console.error('Failed to export QR to JPG:', err);
-    alert('Failed to export QR code image: ' + err.message);
+    showToast('Failed to export QR code image: ' + err.message, 'error');
   } finally {
     exportingJpg.value = false;
   }

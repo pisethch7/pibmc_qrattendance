@@ -1,22 +1,22 @@
 <template>
   <div v-if="isAuthenticated">
     <!-- Desktop & Tablet Top Navbar (Hidden on Mobile) -->
-    <header class="hidden md:block sticky top-0 z-40 bg-slate-950/85 backdrop-blur-xl border-b border-slate-800/80">
+    <header class="hidden md:block sticky top-0 z-40 bg-[#060a18]/70 backdrop-blur-2xl border-b border-white/[0.08] shadow-2xl shadow-black/40">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <!-- Brand -->
           <div class="flex items-center space-x-3">
-          <router-link to="/" class="flex items-center space-x-2.5 sm:space-x-3 group active:scale-95 transition-transform">
-              <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden bg-white flex items-center justify-center shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform flex-shrink-0">
+            <router-link to="/" class="flex items-center space-x-2.5 sm:space-x-3 group active:scale-95 transition-transform">
+              <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl overflow-hidden bg-white p-0.5 flex items-center justify-center shadow-lg shadow-indigo-500/30 group-hover:scale-105 group-hover:rotate-3 transition-all flex-shrink-0 ring-1 ring-white/20">
                 <img :src="logoUrl" alt="PIBMC Logo" class="w-full h-full object-contain" />
               </div>
               <div>
                 <div class="flex items-center">
-                  <span class="text-base sm:text-lg font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent font-['Outfit']">
+                  <span class="text-lg sm:text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-indigo-100 to-indigo-400 bg-clip-text text-transparent font-['Outfit']">
                     PIBMC
                   </span>
-                  <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-indigo-400 ml-1.5 px-1.5 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20">
-                    Attendance
+                  <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-indigo-300 ml-2 px-2 py-0.5 rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 shadow-inner">
+                    Smart Campus
                   </span>
                 </div>
               </div>
@@ -24,12 +24,14 @@
           </div>
 
           <!-- Desktop & Tablet Navigation Links -->
-          <div class="flex items-center space-x-1 lg:space-x-2">
+          <div class="flex items-center space-x-1.5 lg:space-x-2.5">
             <router-link
               v-if="isTeacher"
               to="/teacher"
-              class="px-3.5 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2"
-              :class="$route.name === 'teacher-dashboard' ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'"
+              class="px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2"
+              :class="$route.name === 'teacher-dashboard'
+                ? 'bg-gradient-to-r from-indigo-500/20 via-purple-500/15 to-indigo-500/20 text-indigo-300 border border-indigo-500/40 shadow-md shadow-indigo-500/15'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent'"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
               <span>Dashboard</span>
@@ -38,8 +40,10 @@
             <router-link
               v-if="isStudent"
               to="/student"
-              class="px-3.5 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2"
-              :class="$route.name === 'student-dashboard' ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'"
+              class="px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2"
+              :class="$route.name === 'student-dashboard'
+                ? 'bg-gradient-to-r from-emerald-500/20 via-teal-500/15 to-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-md shadow-emerald-500/15'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent'"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
               <span>My Classes</span>
@@ -48,8 +52,7 @@
             <router-link
               v-if="isStudent"
               to="/student/scan"
-              class="px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2"
-              :class="$route.name === 'student-scan' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 hover:bg-emerald-500/20'"
+              class="btn-emerald-gradient px-4 py-2 rounded-xl text-sm font-bold text-white flex items-center space-x-2 active:scale-95"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -59,8 +62,10 @@
 
             <router-link
               to="/reports"
-              class="px-3.5 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2"
-              :class="$route.name === 'attendance-report' ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'"
+              class="px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2"
+              :class="$route.name === 'attendance-report'
+                ? 'bg-gradient-to-r from-indigo-500/20 via-purple-500/15 to-indigo-500/20 text-indigo-300 border border-indigo-500/40 shadow-md shadow-indigo-500/15'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent'"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
               <span>Reports</span>
@@ -69,12 +74,15 @@
 
           <!-- User Profile & Logout -->
           <div class="flex items-center space-x-2 sm:space-x-3">
-            <div class="flex items-center space-x-2 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-xl bg-slate-900/90 border border-slate-800/90 text-left">
-              <div
-                class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-bold text-xs shadow-inner"
-                :class="isTeacher ? 'bg-gradient-to-tr from-indigo-600 to-purple-500 text-white' : 'bg-gradient-to-tr from-emerald-600 to-teal-400 text-white'"
-              >
-                {{ state.user?.name?.charAt(0) || 'U' }}
+            <div class="flex items-center space-x-2.5 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800/80 text-left shadow-sm">
+              <div class="relative">
+                <div
+                  class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-bold text-xs shadow-inner"
+                  :class="isTeacher ? 'bg-gradient-to-tr from-indigo-600 to-purple-500 text-white' : 'bg-gradient-to-tr from-emerald-600 to-teal-400 text-white'"
+                >
+                  {{ state.user?.name?.charAt(0) || 'U' }}
+                </div>
+                <span class="w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-slate-950 absolute -bottom-0.5 -right-0.5"></span>
               </div>
               <div>
                 <div class="text-xs font-semibold text-slate-200 leading-tight max-w-[120px] truncate">

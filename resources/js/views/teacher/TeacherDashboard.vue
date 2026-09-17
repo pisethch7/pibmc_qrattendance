@@ -1,13 +1,37 @@
 <template>
   <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8">
-    <!-- Top Header -->
+
+    <!-- ── Confirm Dialog Overlay ──────────────────────────── -->
+    <div v-if="confirm.show" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+      <div class="glass-panel w-full max-w-sm p-6 rounded-3xl border border-slate-800 shadow-2xl text-center space-y-4 fade-up">
+        <div class="w-12 h-12 rounded-full bg-rose-500/15 border border-rose-500/30 flex items-center justify-center mx-auto text-rose-400">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+        </div>
+        <div>
+          <h4 class="text-base font-bold text-white font-['Outfit']">{{ confirm.title }}</h4>
+          <p class="text-sm text-slate-400 mt-1">{{ confirm.message }}</p>
+        </div>
+        <div class="flex items-center justify-center gap-3 pt-1">
+          <button @click="confirm.show = false" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold transition-colors">
+            Cancel
+          </button>
+          <button @click="confirm.onConfirm(); confirm.show = false" class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-semibold shadow-lg shadow-rose-600/25 transition-colors">
+            {{ confirm.action || 'Confirm' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Top Header ──────────────────────────────────────── -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
         <div class="flex items-center space-x-2.5">
-          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white font-['Outfit']">
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-gradient-primary font-['Outfit']">
             Teacher Dashboard
           </h1>
-          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-indigo-300 border border-indigo-500/30 shadow-sm">
             Instructor
           </span>
         </div>
@@ -19,7 +43,7 @@
       <div class="grid grid-cols-2 sm:flex sm:items-center gap-2.5 sm:gap-3">
         <button
           @click="openTelegramModal"
-          class="px-3.5 sm:px-4 py-2.5 rounded-xl glass-card hover:bg-slate-800 text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700/80 active:scale-95 transition-all flex items-center justify-center space-x-2"
+          class="px-3.5 sm:px-4 py-2.5 rounded-xl glass-card text-slate-200 text-xs sm:text-sm font-semibold active:scale-95 transition-all flex items-center justify-center space-x-2"
           title="Telegram Bot status and test message"
         >
           <span class="relative flex h-2.5 w-2.5">
@@ -31,9 +55,9 @@
 
         <button
           @click="showCreateCourseModal = true"
-          class="px-3.5 sm:px-4 py-2.5 rounded-xl glass-card hover:bg-slate-800 text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700/80 active:scale-95 transition-all flex items-center justify-center space-x-1.5 sm:space-x-2"
+          class="px-3.5 sm:px-4 py-2.5 rounded-xl glass-card text-slate-200 text-xs sm:text-sm font-semibold active:scale-95 transition-all flex items-center justify-center space-x-1.5 sm:space-x-2"
         >
-          <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
           <span>New Course</span>
@@ -41,7 +65,7 @@
 
         <button
           @click="openStartSessionModal()"
-          class="px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-indigo-500/25 active:scale-95 transition-all flex items-center justify-center space-x-1.5 sm:space-x-2"
+          class="col-span-2 sm:col-span-1 px-4 sm:px-5 py-2.5 rounded-xl btn-primary-gradient text-white text-xs sm:text-sm font-bold active:scale-95 transition-all flex items-center justify-center space-x-1.5 sm:space-x-2"
         >
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
@@ -52,28 +76,25 @@
       </div>
     </div>
 
-    <!-- Active Sessions Banner (iOS Live Activity Style) -->
-    <div v-if="activeSessions.length > 0" class="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-indigo-950/80 via-purple-950/50 to-slate-900 border border-indigo-500/40 glow-indigo">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <!-- ── Active Session Banner ───────────────────────────── -->
+    <div v-if="activeSessions.length > 0" class="p-5 rounded-3xl bg-gradient-to-r from-indigo-950/90 via-purple-950/70 to-slate-900/90 border border-indigo-500/50 glow-indigo relative overflow-hidden">
+      <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-indigo-500/15 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative z-10">
         <div class="flex items-center space-x-3.5">
           <span class="relative flex h-3 w-3">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
           </span>
           <div>
-            <div class="text-[11px] font-bold text-indigo-300 uppercase tracking-wider">
-              Live Attendance Session Active
-            </div>
-            <div class="text-sm sm:text-base font-bold text-white">
-              {{ activeSessions[0].course?.name }}
-            </div>
+            <div class="text-[11px] font-bold text-indigo-300 uppercase tracking-wider">Live Attendance Session Active</div>
+            <div class="text-sm sm:text-base font-bold text-white">{{ activeSessions[0].course?.name }}</div>
           </div>
         </div>
 
         <div class="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:space-x-3">
           <router-link
             :to="`/teacher/session/${activeSessions[0].id}`"
-            class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all flex items-center justify-center space-x-1.5 shadow-md shadow-indigo-600/30 active:scale-95"
+            class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition-all flex items-center justify-center space-x-1.5 shadow-lg shadow-indigo-600/30 active:scale-95"
           >
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -82,8 +103,8 @@
           </router-link>
 
           <button
-            @click="closeSession(activeSessions[0].id)"
-            class="px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-semibold active:scale-95 transition-all text-center"
+            @click="askCloseSession(activeSessions[0].id)"
+            class="px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-semibold active:scale-95 transition-all text-center"
           >
             End Session
           </button>
@@ -91,92 +112,95 @@
       </div>
     </div>
 
-    <!-- Metrics Cards (Responsive on Phone and Tablet) -->
+    <!-- ── Metric Cards ────────────────────────────────────── -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5">
-      <div class="glass-panel p-6 rounded-2xl border border-slate-800">
+      <div class="glass-panel p-6 rounded-3xl border border-indigo-500/20 glow-indigo relative overflow-hidden group hover:border-indigo-500/40 transition-all">
+        <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-indigo-500 to-transparent"></div>
         <div class="flex items-center justify-between">
           <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Courses Taught</span>
-          <div class="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+          <div class="p-2.5 rounded-xl bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 shadow-sm">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
           </div>
         </div>
-        <div class="mt-4 text-3xl font-extrabold text-white font-['Outfit']">
-          {{ courses.length }}
-        </div>
-        <div class="mt-1 text-xs text-slate-400">Active class sections</div>
+        <div class="mt-4 text-3xl font-extrabold text-white font-['Outfit']">{{ courses.length }}</div>
+        <div class="mt-1 text-xs text-indigo-300/70">Active class sections</div>
       </div>
 
-      <div class="glass-panel p-6 rounded-2xl border border-slate-800">
+      <div class="glass-panel p-6 rounded-3xl border border-purple-500/20 glow-purple relative overflow-hidden group hover:border-purple-500/40 transition-all">
+        <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-purple-500 to-transparent"></div>
         <div class="flex items-center justify-between">
           <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Enrolled</span>
-          <div class="p-2.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+          <div class="p-2.5 rounded-xl bg-purple-500/15 text-purple-300 border border-purple-500/30 shadow-sm">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
           </div>
         </div>
-        <div class="mt-4 text-3xl font-extrabold text-white font-['Outfit']">
-          {{ totalEnrolledStudents }}
-        </div>
-        <div class="mt-1 text-xs text-slate-400">Total student enrollments</div>
+        <div class="mt-4 text-3xl font-extrabold text-white font-['Outfit']">{{ totalEnrolledStudents }}</div>
+        <div class="mt-1 text-xs text-purple-300/70">Total student enrollments</div>
       </div>
 
-      <div class="glass-panel p-6 rounded-2xl border border-slate-800">
+      <div class="glass-panel p-6 rounded-3xl border border-emerald-500/20 glow-emerald relative overflow-hidden group hover:border-emerald-500/40 transition-all">
+        <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-emerald-500 to-transparent"></div>
         <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Sessions Held</span>
-          <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Sessions Held</span>
+          <div class="p-2.5 rounded-xl bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-sm">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
         </div>
-        <div class="mt-4 text-3xl font-extrabold text-white font-['Outfit']">
-          {{ totalSessions }}
-        </div>
-        <div class="mt-1 text-xs text-slate-400">All-time attendance checks</div>
+        <div class="mt-4 text-3xl font-extrabold text-white font-['Outfit']">{{ totalSessions }}</div>
+        <div class="mt-1 text-xs text-emerald-300/70">All-time attendance checks</div>
       </div>
     </div>
 
-    <!-- Courses Management Section -->
+    <!-- ── Courses Grid ────────────────────────────────────── -->
     <div class="space-y-4">
       <div class="flex items-center justify-between">
-        <h2 class="text-xl font-bold text-white font-['Outfit']">
-          Your Courses
-        </h2>
+        <h2 class="text-xl font-bold text-white font-['Outfit']">Your Courses</h2>
+        <span class="text-xs text-slate-500">{{ courses.length }} course{{ courses.length !== 1 ? 's' : '' }}</span>
       </div>
 
-      <div v-if="loading" class="text-center py-12 text-slate-400 text-sm">
-        Loading courses...
-      </div>
-
-      <div v-else-if="courses.length === 0" class="glass-panel p-12 rounded-2xl text-center border border-slate-800">
-        <div class="w-12 h-12 mx-auto rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-3">
-          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+      <!-- Loading skeleton -->
+      <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div v-for="n in 4" :key="n" class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-3 shimmer">
+          <div class="h-5 bg-slate-800 rounded-lg w-3/4"></div>
+          <div class="h-3 bg-slate-800/70 rounded-lg w-1/2"></div>
+          <div class="h-3 bg-slate-800/60 rounded-lg w-2/3 mt-4"></div>
         </div>
-        <h3 class="text-base font-semibold text-white">No courses yet</h3>
+      </div>
+
+      <!-- Empty state -->
+      <div v-else-if="courses.length === 0" class="glass-panel p-14 rounded-2xl text-center border border-slate-800 border-dashed">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-4">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13"/>
+          </svg>
+        </div>
+        <h3 class="text-base font-bold text-white">No courses yet</h3>
         <p class="text-sm text-slate-400 mt-1">Create your first course to start taking attendance</p>
         <button
           @click="showCreateCourseModal = true"
-          class="mt-4 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold"
+          class="mt-5 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/25 transition-colors"
         >
-          Create Course
+          Create First Course
         </button>
       </div>
 
+      <!-- Course cards -->
       <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div
           v-for="c in courses"
           :key="c.id"
-          class="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between"
+          class="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between group"
         >
           <div>
             <div class="flex items-start justify-between gap-2">
-              <h3 class="text-lg font-bold text-white font-['Outfit']">
-                {{ c.name }}
-              </h3>
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 whitespace-nowrap">
+              <h3 class="text-lg font-bold text-white font-['Outfit'] leading-tight">{{ c.name }}</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 whitespace-nowrap flex-shrink-0">
                 {{ c.students_count || 0 }} Students
               </span>
             </div>
@@ -191,17 +215,21 @@
           <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between gap-3">
             <button
               @click="openEnrollModal(c)"
-              class="text-xs font-medium text-slate-300 hover:text-white px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 transition-colors flex items-center space-x-1.5"
+              class="text-xs font-medium text-slate-300 hover:text-white px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 transition-colors flex items-center space-x-1.5"
             >
-              <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+              <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+              </svg>
               <span>Manage Students</span>
             </button>
 
             <button
               @click="openStartSessionModal(c.id)"
-              class="text-xs font-semibold px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-md shadow-indigo-600/20 transition-all flex items-center space-x-1.5"
+              class="text-xs font-semibold px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-md shadow-indigo-600/20 transition-all flex items-center space-x-1.5 active:scale-95"
             >
-              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg>
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+              </svg>
               <span>Start QR Session</span>
             </button>
           </div>
@@ -209,197 +237,106 @@
       </div>
     </div>
 
-    <!-- Modal: Start Session -->
+    <!-- ── Modal: Start Session ────────────────────────────── -->
     <div v-if="showStartSessionModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md">
       <div class="glass-panel w-full max-w-lg p-5 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-        <button @click="showStartSessionModal = false" class="absolute top-5 right-5 text-slate-400 hover:text-white active:scale-90 transition-transform">
+        <button @click="showStartSessionModal = false" class="absolute top-5 right-5 text-slate-400 hover:text-white active:scale-90 transition-transform p-1">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
-        <h3 class="text-xl font-bold text-white font-['Outfit'] mb-1">
-          Start Attendance Session
-        </h3>
-        <p class="text-xs text-slate-400 mb-5">
-          Set up geofence boundary coordinates and launch rotating QR projector screen
-        </p>
+        <h3 class="text-xl font-bold text-white font-['Outfit'] mb-1">Start Attendance Session</h3>
+        <p class="text-xs text-slate-400 mb-5">Set up verification and launch rotating QR projector screen</p>
 
         <form @submit.prevent="handleStartSession" class="space-y-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-              Select Course
-            </label>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Select Course</label>
             <select
               v-model="sessionForm.course_id"
               required
               class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
             >
               <option disabled value="">-- Choose a course --</option>
-              <option v-for="c in courses" :key="c.id" :value="c.id">
-                {{ c.name }}
-              </option>
+              <option v-for="c in courses" :key="c.id" :value="c.id">{{ c.name }}</option>
             </select>
           </div>
 
-          <!-- Verification Method: Option 1 (Location) vs Option 2 (School WiFi) -->
+          <!-- Verification method -->
           <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-              Presence Verification Method
-            </label>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
-              <!-- Option 1: Location -->
-              <button
-                type="button"
-                @click="sessionForm.verification_mode = 'location'"
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Presence Verification Method</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <button type="button" @click="sessionForm.verification_mode = 'location'"
                 class="p-3.5 rounded-xl border text-left transition-all"
-                :class="sessionForm.verification_mode === 'location'
-                  ? 'bg-indigo-600/20 border-indigo-500/60 ring-1 ring-indigo-500/40'
-                  : 'bg-slate-900 border-slate-800 hover:border-slate-700 opacity-70 hover:opacity-100'"
-              >
+                :class="sessionForm.verification_mode === 'location' ? 'bg-indigo-600/20 border-indigo-500/60 ring-1 ring-indigo-500/40' : 'bg-slate-900 border-slate-800 hover:border-slate-700 opacity-70 hover:opacity-100'">
                 <div class="flex items-center space-x-2.5 mb-1.5">
-                  <div
-                    class="p-1.5 rounded-lg"
-                    :class="sessionForm.verification_mode === 'location' ? 'bg-indigo-500 text-white' : 'bg-slate-800 text-slate-400'"
-                  >
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
+                  <div class="p-1.5 rounded-lg" :class="sessionForm.verification_mode === 'location' ? 'bg-indigo-500 text-white' : 'bg-slate-800 text-slate-400'">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                   </div>
                   <div>
-                    <span class="text-xs font-bold text-white block">Option 1</span>
-                    <span class="text-[10px] text-indigo-300 font-medium">Classroom Location</span>
+                    <span class="text-xs font-bold text-white block">GPS Location</span>
+                    <span class="text-[10px] text-indigo-300 font-medium">Classroom Geofence</span>
                   </div>
                 </div>
-                <p class="text-[11px] text-slate-400 leading-tight">
-                  GPS geofence check. Requires students to be physically within radius.
-                </p>
+                <p class="text-[11px] text-slate-400 leading-tight">Requires students to be within radius of classroom.</p>
               </button>
 
-              <!-- Option 2: School WiFi -->
-              <button
-                type="button"
-                @click="sessionForm.verification_mode = 'wifi'"
+              <button type="button" @click="sessionForm.verification_mode = 'wifi'"
                 class="p-3.5 rounded-xl border text-left transition-all"
-                :class="sessionForm.verification_mode === 'wifi'
-                  ? 'bg-teal-600/20 border-teal-500/60 ring-1 ring-teal-500/40'
-                  : 'bg-slate-900 border-slate-800 hover:border-slate-700 opacity-70 hover:opacity-100'"
-              >
+                :class="sessionForm.verification_mode === 'wifi' ? 'bg-teal-600/20 border-teal-500/60 ring-1 ring-teal-500/40' : 'bg-slate-900 border-slate-800 hover:border-slate-700 opacity-70 hover:opacity-100'">
                 <div class="flex items-center space-x-2.5 mb-1.5">
-                  <div
-                    class="p-1.5 rounded-lg"
-                    :class="sessionForm.verification_mode === 'wifi' ? 'bg-teal-500 text-white' : 'bg-slate-800 text-slate-400'"
-                  >
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
-                    </svg>
+                  <div class="p-1.5 rounded-lg" :class="sessionForm.verification_mode === 'wifi' ? 'bg-teal-500 text-white' : 'bg-slate-800 text-slate-400'">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
                   </div>
                   <div>
-                    <span class="text-xs font-bold text-white block">Option 2</span>
-                    <span class="text-[10px] text-teal-300 font-medium">School WiFi</span>
+                    <span class="text-xs font-bold text-white block">School WiFi</span>
+                    <span class="text-[10px] text-teal-300 font-medium">Campus Network</span>
                   </div>
                 </div>
-                <p class="text-[11px] text-slate-400 leading-tight">
-                  School subnet check. Requires students to be on campus WiFi network.
-                </p>
+                <p class="text-[11px] text-slate-400 leading-tight">Requires students to be on school WiFi network.</p>
               </button>
             </div>
           </div>
 
-          <!-- OPTION 1 FIELDS: Geofence GPS Coordinates & Radius -->
-          <div v-if="sessionForm.verification_mode === 'location'" class="space-y-4 p-4 rounded-xl bg-slate-900/60 border border-slate-800 animate-in fade-in duration-200">
+          <!-- GPS fields -->
+          <div v-if="sessionForm.verification_mode === 'location'" class="space-y-4 p-4 rounded-xl bg-slate-900/60 border border-slate-800">
             <div>
               <div class="flex items-center justify-between mb-1.5">
-                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                  Classroom Coordinates (Lat / Long)
-                </label>
-                <button
-                  type="button"
-                  @click="detectLocation"
-                  class="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 flex items-center space-x-1"
-                >
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Classroom Coordinates</label>
+                <button type="button" @click="detectLocation" class="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 flex items-center space-x-1">
                   <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                   <span>Detect My Location</span>
                 </button>
               </div>
               <div class="grid grid-cols-2 gap-3">
-                <input
-                  v-model.number="sessionForm.latitude"
-                  type="number"
-                  step="0.0000001"
-                  :required="sessionForm.verification_mode === 'location'"
-                  placeholder="Latitude (e.g. 11.5564)"
-                  class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm"
-                />
-                <input
-                  v-model.number="sessionForm.longitude"
-                  type="number"
-                  step="0.0000001"
-                  :required="sessionForm.verification_mode === 'location'"
-                  placeholder="Longitude (e.g. 104.9282)"
-                  class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm"
-                />
+                <input v-model.number="sessionForm.latitude" type="number" step="0.0000001" :required="sessionForm.verification_mode === 'location'" placeholder="Latitude (11.5564)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/50"/>
+                <input v-model.number="sessionForm.longitude" type="number" step="0.0000001" :required="sessionForm.verification_mode === 'location'" placeholder="Longitude (104.9282)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/50"/>
               </div>
-              <div class="mt-2 flex items-center space-x-2 text-[11px] text-slate-400">
-                <button
-                  type="button"
-                  @click="setCampusPreset"
-                  class="underline hover:text-indigo-300"
-                >
-                  Use Campus Preset (11.55640, 104.92820)
-                </button>
-              </div>
+              <button type="button" @click="setCampusPreset" class="mt-2 text-[11px] text-indigo-400 hover:text-indigo-300 underline">
+                Use Campus Preset (11.55640, 104.92820)
+              </button>
             </div>
 
-            <!-- Allowed Radius -->
             <div>
               <div class="flex items-center justify-between mb-1.5">
-                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                  Allowed Radius
-                </label>
-                <span class="text-xs font-bold text-indigo-400">
-                  {{ sessionForm.radius_meters }} meters
-                </span>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Allowed Radius</label>
+                <span class="text-xs font-bold text-indigo-400">{{ sessionForm.radius_meters }} meters</span>
               </div>
-              <input
-                v-model.number="sessionForm.radius_meters"
-                type="range"
-                min="20"
-                max="500"
-                step="10"
-                class="w-full accent-indigo-500 cursor-pointer"
-              />
+              <input v-model.number="sessionForm.radius_meters" type="range" min="20" max="500" step="10" class="w-full accent-indigo-500 cursor-pointer"/>
               <div class="flex justify-between text-[10px] text-slate-500 mt-1">
-                <span>20m (Tight)</span>
-                <span>100m (Standard Classroom)</span>
-                <span>500m (Lecture Hall/Campus)</span>
+                <span>20m (Tight)</span><span>100m (Standard)</span><span>500m (Campus)</span>
               </div>
             </div>
           </div>
 
-          <!-- OPTION 2 FIELDS: School WiFi Subnet & Info -->
-          <div v-if="sessionForm.verification_mode === 'wifi'" class="p-4 rounded-xl bg-teal-950/20 border border-teal-500/30 space-y-3 animate-in fade-in duration-200">
+          <!-- WiFi fields -->
+          <div v-if="sessionForm.verification_mode === 'wifi'" class="p-4 rounded-xl bg-teal-950/20 border border-teal-500/30 space-y-3">
             <div class="flex items-center space-x-2 text-teal-300 font-semibold text-xs">
-              <svg class="w-4 h-4 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>School WiFi Subnet Verification Active</span>
+              <svg class="w-4 h-4 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span>School WiFi Subnet Verification</span>
             </div>
-            <p class="text-[11px] text-slate-300 leading-relaxed">
-              Only scans originating from your school's local WiFi network will be accepted. Remote students on mobile data (4G/5G) or home internet are automatically rejected.
-            </p>
+            <p class="text-[11px] text-slate-300 leading-relaxed">Only scans from your school's local WiFi will be accepted. Remote students on mobile data are automatically rejected.</p>
             <div>
-              <label class="block text-[10px] font-semibold text-slate-400 uppercase mb-1">
-                School Subnet CIDR (Optional — defaults to school LAN)
-              </label>
-              <input
-                v-model="sessionForm.wifi_subnet"
-                type="text"
-                placeholder="e.g. 192.168.1.0/24 or 10.0.0.0/16"
-                class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-white font-mono text-xs focus:outline-none focus:ring-1 focus:ring-teal-500"
-              />
-              <span class="text-[10px] text-slate-500 mt-1 block">
-                Leave blank to use system default school network subnets.
-              </span>
+              <label class="block text-[10px] font-semibold text-slate-400 uppercase mb-1">School Subnet CIDR (Optional)</label>
+              <input v-model="sessionForm.wifi_subnet" type="text" placeholder="e.g. 192.168.1.0/24" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-white font-mono text-xs focus:outline-none focus:ring-1 focus:ring-teal-500"/>
             </div>
           </div>
 
@@ -408,261 +345,156 @@
           </div>
 
           <div class="pt-4 flex items-center justify-end space-x-3">
-            <button
-              type="button"
-              @click="showStartSessionModal = false"
-              class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              :disabled="startingSession"
-              class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/25 disabled:opacity-50"
-            >
-              {{ startingSession ? 'Starting Session...' : 'Launch Projector QR' }}
+            <button type="button" @click="showStartSessionModal = false" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">Cancel</button>
+            <button type="submit" :disabled="startingSession" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/25 disabled:opacity-50 flex items-center space-x-2">
+              <svg v-if="startingSession" class="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+              <span>{{ startingSession ? 'Launching...' : 'Launch Projector QR' }}</span>
             </button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- Modal: Create Course -->
+    <!-- ── Modal: Create Course ────────────────────────────── -->
     <div v-if="showCreateCourseModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md">
-      <div class="glass-panel w-full max-w-md p-5 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-        <button @click="showCreateCourseModal = false" class="absolute top-5 right-5 text-slate-400 hover:text-white active:scale-90 transition-transform">
+      <div class="glass-panel w-full max-w-md p-5 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl relative">
+        <button @click="showCreateCourseModal = false" class="absolute top-5 right-5 text-slate-400 hover:text-white active:scale-90 transition-transform p-1">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
-        <h3 class="text-xl font-bold text-white font-['Outfit'] mb-1">
-          Create New Course
-        </h3>
-        <p class="text-xs text-slate-400 mb-5">
-          Add a course section to start enrolling students and tracking attendance
-        </p>
+        <h3 class="text-xl font-bold text-white font-['Outfit'] mb-1">Create New Course</h3>
+        <p class="text-xs text-slate-400 mb-5">Add a course section to start enrolling students and tracking attendance</p>
 
         <form @submit.prevent="handleCreateCourse" class="space-y-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-              Course Name & Code
-            </label>
-            <input
-              v-model="courseForm.name"
-              type="text"
-              required
-              placeholder="e.g. CS301 - Web & Mobile Cloud Applications"
-              class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm"
-            />
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Course Name & Code</label>
+            <input v-model="courseForm.name" type="text" required placeholder="e.g. CS301 - Web & Mobile Cloud Applications" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50"/>
           </div>
-
           <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-              Schedule / Room Info
-            </label>
-            <input
-              v-model="courseForm.schedule_info"
-              type="text"
-              placeholder="e.g. Mon / Wed 08:30 AM (Room 402)"
-              class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm"
-            />
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Schedule / Room Info</label>
+            <input v-model="courseForm.schedule_info" type="text" placeholder="e.g. Mon / Wed 08:30 AM (Room 402)" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50"/>
           </div>
-
           <div class="pt-4 flex items-center justify-end space-x-3">
-            <button
-              type="button"
-              @click="showCreateCourseModal = false"
-              class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30"
-            >
-              Create Course
+            <button type="button" @click="showCreateCourseModal = false" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">Cancel</button>
+            <button type="submit" :disabled="creatingCourse" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 disabled:opacity-50 flex items-center space-x-2">
+              <svg v-if="creatingCourse" class="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+              <span>{{ creatingCourse ? 'Creating...' : 'Create Course' }}</span>
             </button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- Modal: Manage Students & Enrollment -->
+    <!-- ── Modal: Manage Students ──────────────────────────── -->
     <div v-if="showEnrollModal && selectedCourse" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md">
       <div class="glass-panel w-full max-w-xl p-5 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl relative max-h-[90vh] flex flex-col">
-        <button @click="showEnrollModal = false" class="absolute top-5 right-5 text-slate-400 hover:text-white active:scale-90 transition-transform">
+        <button @click="showEnrollModal = false" class="absolute top-5 right-5 text-slate-400 hover:text-white active:scale-90 transition-transform p-1">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
-        <div>
-          <h3 class="text-xl font-bold text-white font-['Outfit']">
-            Enrolled Students
-          </h3>
-          <p class="text-xs text-slate-400 mt-1">
-            {{ selectedCourse.name }}
-          </p>
+        <div class="mb-4">
+          <h3 class="text-xl font-bold text-white font-['Outfit']">Enrolled Students</h3>
+          <p class="text-xs text-slate-400 mt-1">{{ selectedCourse.name }}</p>
         </div>
 
-        <!-- Enroll New Student Form -->
-        <div class="my-4 sm:my-5 p-3.5 sm:p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
-          <div class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-            Enroll New Student
-          </div>
+        <!-- Enroll form -->
+        <div class="mb-4 p-3.5 sm:p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+          <div class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Enroll New Student</div>
           <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-            <select
-              v-model="newStudentId"
-              class="flex-1 px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:outline-none"
-            >
+            <select v-model="newStudentId" class="flex-1 px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:outline-none">
               <option value="">-- Select Student --</option>
-              <option
-                v-for="s in availableStudents"
-                :key="s.id"
-                :value="s.id"
-                :disabled="isStudentAlreadyEnrolled(s.id)"
-              >
+              <option v-for="s in availableStudents" :key="s.id" :value="s.id" :disabled="isStudentAlreadyEnrolled(s.id)">
                 {{ s.name }} ({{ s.email }}) {{ isStudentAlreadyEnrolled(s.id) ? '— [Enrolled]' : '' }}
               </option>
             </select>
-            <button
-              @click="handleEnrollStudent"
-              :disabled="!newStudentId"
-              class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold whitespace-nowrap active:scale-95 transition-all text-center"
-            >
-              Enroll
+            <button @click="handleEnrollStudent" :disabled="!newStudentId || enrolling" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold whitespace-nowrap active:scale-95 transition-all flex items-center justify-center gap-1.5">
+              <svg v-if="enrolling" class="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+              <span>{{ enrolling ? 'Enrolling...' : 'Enroll' }}</span>
             </button>
           </div>
         </div>
 
-        <!-- Enrolled List -->
+        <!-- Enrolled list -->
         <div class="flex-1 overflow-y-auto pr-1 space-y-2">
-          <div
-            v-for="s in enrolledRoster"
-            :key="s.id"
-            class="p-3 rounded-xl bg-slate-900/50 border border-slate-800/80 flex items-center justify-between"
-          >
+          <div v-for="s in enrolledRoster" :key="s.id"
+            class="p-3 rounded-xl bg-slate-900/50 border border-slate-800/80 flex items-center justify-between hover:border-slate-700/80 transition-colors">
             <div>
               <div class="text-sm font-semibold text-white">{{ s.name }}</div>
               <div class="text-xs text-slate-400">{{ s.email }}</div>
             </div>
-            <button
-              @click="handleUnenrollStudent(s.id)"
-              class="text-xs text-rose-400 hover:text-rose-300 px-2.5 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20"
-            >
+            <button @click="askUnenroll(s)" class="text-xs text-rose-400 hover:text-rose-300 px-2.5 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 transition-colors">
               Remove
             </button>
           </div>
 
-          <div v-if="enrolledRoster.length === 0" class="text-center py-6 text-xs text-slate-400">
-            No students currently enrolled in this course.
+          <div v-if="enrolledRoster.length === 0" class="text-center py-8 space-y-2">
+            <div class="w-10 h-10 mx-auto rounded-xl bg-slate-800 flex items-center justify-center text-slate-500">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <p class="text-xs text-slate-400">No students enrolled yet.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Modal: Telegram Bot Diagnostics & Test -->
+    <!-- ── Modal: Telegram Diagnostics ────────────────────── -->
     <div v-if="showTelegramModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md">
       <div class="glass-panel w-full max-w-lg p-5 sm:p-7 rounded-3xl border border-slate-800 shadow-2xl relative max-h-[90vh] flex flex-col overflow-y-auto">
-        <button @click="showTelegramModal = false" class="absolute top-5 right-5 text-slate-400 hover:text-white active:scale-90 transition-transform">
+        <button @click="showTelegramModal = false" class="absolute top-5 right-5 text-slate-400 hover:text-white active:scale-90 transition-transform p-1">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
         <div class="flex items-center space-x-3 mb-4">
           <div class="w-10 h-10 rounded-2xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-2.02 1.28-5.7 3.77-.54.37-1.03.55-1.47.54-.48-.01-1.41-.27-2.1-.5-.85-.28-1.52-.43-1.46-.91.03-.25.38-.51 1.05-.78 4.12-1.79 6.87-2.98 8.25-3.56 3.93-1.64 4.74-1.92 5.27-1.93.12 0 .37.03.54.17.14.12.18.28.2.45-.02.07-.02.18-.03.26z"/>
-            </svg>
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-2.02 1.28-5.7 3.77-.54.37-1.03.55-1.47.54-.48-.01-1.41-.27-2.1-.5-.85-.28-1.52-.43-1.46-.91.03-.25.38-.51 1.05-.78 4.12-1.79 6.87-2.98 8.25-3.56 3.93-1.64 4.74-1.92 5.27-1.93.12 0 .37.03.54.17.14.12.18.28.2.45-.02.07-.02.18-.03.26z"/></svg>
           </div>
           <div>
-            <h3 class="text-lg font-bold text-white font-['Outfit']">
-              Telegram Bot Integration
-            </h3>
-            <p class="text-xs text-slate-400">
-              Live notifications for session QR codes and student check-ins
-            </p>
+            <h3 class="text-lg font-bold text-white font-['Outfit']">Telegram Bot Integration</h3>
+            <p class="text-xs text-slate-400">Live notifications for session QR codes and student check-ins</p>
           </div>
         </div>
 
-        <!-- Loading -->
-        <div v-if="telegramLoading" class="py-10 text-center text-slate-400 text-xs">
-          Checking Telegram bot connectivity...
-        </div>
+        <div v-if="telegramLoading" class="py-10 text-center text-slate-400 text-xs">Checking Telegram bot connectivity...</div>
 
         <div v-else class="space-y-4">
-          <!-- Status Banner -->
-          <div
-            class="p-4 rounded-2xl border flex items-start space-x-3"
-            :class="telegramStatus?.configured && telegramStatus?.api_reachable ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-amber-500/10 border-amber-500/30'"
-          >
+          <div class="p-4 rounded-2xl border flex items-start space-x-3"
+            :class="telegramStatus?.configured && telegramStatus?.api_reachable ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-amber-500/10 border-amber-500/30'">
             <div class="mt-0.5">
               <span v-if="telegramStatus?.configured && telegramStatus?.api_reachable" class="text-emerald-400 text-lg">✅</span>
               <span v-else class="text-amber-400 text-lg">⚠️</span>
             </div>
             <div class="flex-1 text-xs">
-              <div class="font-bold text-white mb-0.5">
-                {{ telegramStatus?.configured && telegramStatus?.api_reachable ? 'Telegram Bot Connected & Ready' : 'Configuration Attention Needed' }}
-              </div>
+              <div class="font-bold text-white mb-0.5">{{ telegramStatus?.configured && telegramStatus?.api_reachable ? 'Telegram Bot Connected & Ready' : 'Configuration Attention Needed' }}</div>
               <div class="text-slate-300">
-                <span v-if="telegramStatus?.configured && telegramStatus?.api_reachable">
-                  Bot <strong>@{{ telegramStatus?.bot_info?.username }}</strong> is connected to chat ID <code>{{ telegramStatus?.chat_id }}</code>.
-                </span>
-                <span v-else-if="!telegramStatus?.bot_token_set">
-                  Bot Token is missing in Environment Variables!
-                </span>
-                <span v-else-if="!telegramStatus?.api_reachable">
-                  Cannot reach Telegram: {{ telegramStatus?.error }}
-                </span>
-                <span v-else>
-                  Chat ID is missing in Environment Variables!
-                </span>
+                <span v-if="telegramStatus?.configured && telegramStatus?.api_reachable">Bot <strong>@{{ telegramStatus?.bot_info?.username }}</strong> is connected to chat ID <code>{{ telegramStatus?.chat_id }}</code>.</span>
+                <span v-else-if="!telegramStatus?.bot_token_set">Bot Token is missing in Environment Variables!</span>
+                <span v-else-if="!telegramStatus?.api_reachable">Cannot reach Telegram: {{ telegramStatus?.error }}</span>
+                <span v-else>Chat ID is missing in Environment Variables!</span>
               </div>
             </div>
           </div>
 
-          <!-- Configuration Details -->
           <div class="bg-slate-900/70 p-3.5 rounded-2xl border border-slate-800 space-y-2 text-xs">
-            <div class="flex justify-between py-1 border-b border-slate-800/60">
-              <span class="text-slate-400">Bot Token</span>
-              <span class="font-mono text-slate-200">{{ telegramStatus?.bot_token_preview || 'Not set' }}</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-800/60">
-              <span class="text-slate-400">Target Chat ID</span>
-              <span class="font-mono text-slate-200">{{ telegramStatus?.chat_id || 'Not set' }}</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-800/60">
-              <span class="text-slate-400">Bot Username</span>
-              <span class="font-semibold text-sky-400">{{ telegramStatus?.bot_info?.username ? '@' + telegramStatus?.bot_info?.username : 'Unknown' }}</span>
-            </div>
-            <div class="flex justify-between py-1">
-              <span class="text-slate-400">PHP GD Extension</span>
-              <span :class="telegramStatus?.gd_installed ? 'text-emerald-400' : 'text-amber-400'">{{ telegramStatus?.gd_installed ? 'Loaded (Local GD)' : 'Using Fallback API' }}</span>
-            </div>
+            <div class="flex justify-between py-1 border-b border-slate-800/60"><span class="text-slate-400">Bot Token</span><span class="font-mono text-slate-200">{{ telegramStatus?.bot_token_preview || 'Not set' }}</span></div>
+            <div class="flex justify-between py-1 border-b border-slate-800/60"><span class="text-slate-400">Target Chat ID</span><span class="font-mono text-slate-200">{{ telegramStatus?.chat_id || 'Not set' }}</span></div>
+            <div class="flex justify-between py-1 border-b border-slate-800/60"><span class="text-slate-400">Bot Username</span><span class="font-semibold text-sky-400">{{ telegramStatus?.bot_info?.username ? '@' + telegramStatus?.bot_info?.username : 'Unknown' }}</span></div>
+            <div class="flex justify-between py-1"><span class="text-slate-400">PHP GD Extension</span><span :class="telegramStatus?.gd_installed ? 'text-emerald-400' : 'text-amber-400'">{{ telegramStatus?.gd_installed ? 'Loaded (Local GD)' : 'Using Fallback API' }}</span></div>
           </div>
 
-          <!-- Send Test Button -->
-          <div class="pt-1">
-            <button
-              @click="handleSendTelegramTest"
-              :disabled="testSending || !telegramStatus?.configured"
-              class="w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 disabled:opacity-50 text-white font-semibold text-xs shadow-lg shadow-sky-500/20 active:scale-98 transition-all flex items-center justify-center space-x-2"
-            >
-              <svg v-if="testSending" class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-              </svg>
-              <span>{{ testSending ? 'Sending Test Message...' : 'Send Test Notification to Telegram' }}</span>
-            </button>
-            <p v-if="testResult" class="mt-2 text-center text-xs" :class="testResult.success ? 'text-emerald-400' : 'text-rose-400'">
-              {{ testResult.message }}
-            </p>
-          </div>
+          <button @click="handleSendTelegramTest" :disabled="testSending || !telegramStatus?.configured"
+            class="w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 disabled:opacity-50 text-white font-semibold text-xs shadow-lg shadow-sky-500/20 active:scale-98 transition-all flex items-center justify-center space-x-2">
+            <svg v-if="testSending" class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+            <span>{{ testSending ? 'Sending Test Message...' : 'Send Test Notification to Telegram' }}</span>
+          </button>
+          <p v-if="testResult" class="text-center text-xs" :class="testResult.success ? 'text-emerald-400' : 'text-rose-400'">{{ testResult.message }}</p>
 
-          <!-- Laravel Cloud Instructions -->
           <div class="p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800 text-[11px] text-slate-400 space-y-1.5">
-            <div class="font-semibold text-slate-300">⚙️ Laravel Cloud Setup Check:</div>
-            <div>In your <strong>Laravel Cloud Dashboard → Environment → Variables</strong>, ensure these are configured:</div>
+            <div class="font-semibold text-slate-300">⚙️ Laravel Cloud Setup:</div>
+            <div>In <strong>Laravel Cloud Dashboard → Environment → Variables</strong>, ensure:</div>
             <div class="font-mono bg-slate-900 p-2 rounded-lg text-[10px] text-slate-300 select-all overflow-x-auto">
               TELEGRAM_ENABLED=true<br/>
-              TELEGRAM_BOT_TOKEN=8975196350:AAH-W910saKAb2LCYOu-ATQAShbJJxJ9qYQ<br/>
-              TELEGRAM_CHAT_ID=5536919758
+              TELEGRAM_BOT_TOKEN=your_bot_token<br/>
+              TELEGRAM_CHAT_ID=your_chat_id
             </div>
           </div>
         </div>
@@ -675,13 +507,17 @@
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '../../services/api';
+import { useToast } from '../../composables/useToast';
 
 const router = useRouter();
+const { showToast } = useToast();
 
 const courses = ref([]);
 const activeSessions = ref([]);
 const allStudents = ref([]);
 const loading = ref(true);
+const creatingCourse = ref(false);
+const enrolling = ref(false);
 
 const showCreateCourseModal = ref(false);
 const showStartSessionModal = ref(false);
@@ -693,6 +529,24 @@ const telegramStatus = ref(null);
 const testSending = ref(false);
 const testResult = ref(null);
 
+// ── Confirm dialog state ───────────────────────────────────────
+const confirm = reactive({
+  show: false,
+  title: '',
+  message: '',
+  action: 'Confirm',
+  onConfirm: () => {},
+});
+
+const showConfirm = (title, message, action, onConfirm) => {
+  confirm.title = title;
+  confirm.message = message;
+  confirm.action = action;
+  confirm.onConfirm = onConfirm;
+  confirm.show = true;
+};
+
+// ── Telegram ──────────────────────────────────────────────────
 const fetchTelegramStatus = async () => {
   try {
     telegramLoading.value = true;
@@ -716,31 +570,24 @@ const handleSendTelegramTest = async () => {
   testResult.value = null;
   try {
     const { data } = await api.post('/telegram/test');
-    testResult.value = {
-      success: true,
-      message: data.message || 'Test message sent successfully to Telegram!',
-    };
+    testResult.value = { success: true, message: data.message || 'Test message sent successfully!' };
+    showToast('Test message sent to Telegram! ✅', 'success');
   } catch (err) {
-    testResult.value = {
-      success: false,
-      message: err.response?.data?.message || err.message || 'Failed to send test message.',
-    };
+    testResult.value = { success: false, message: err.response?.data?.message || 'Failed to send test message.' };
+    showToast('Failed to send Telegram test message.', 'error');
   } finally {
     testSending.value = false;
   }
 };
 
+// ── Session ───────────────────────────────────────────────────
 const startingSession = ref(false);
 const startSessionError = ref('');
-
 const selectedCourse = ref(null);
 const enrolledRoster = ref([]);
 const newStudentId = ref('');
 
-const courseForm = reactive({
-  name: '',
-  schedule_info: '',
-});
+const courseForm = reactive({ name: '', schedule_info: '' });
 
 const sessionForm = reactive({
   course_id: '',
@@ -752,21 +599,10 @@ const sessionForm = reactive({
   wifi_subnet: '192.168.1.0/24',
 });
 
-const totalEnrolledStudents = computed(() => {
-  return courses.value.reduce((acc, c) => acc + (c.students_count || 0), 0);
-});
-
-const totalSessions = computed(() => {
-  return courses.value.reduce((acc, c) => acc + (c.sessions_count || 0), 0);
-});
-
-const availableStudents = computed(() => {
-  return allStudents.value;
-});
-
-const isStudentAlreadyEnrolled = (studentId) => {
-  return enrolledRoster.value.some((s) => s.id === studentId);
-};
+const totalEnrolledStudents = computed(() => courses.value.reduce((acc, c) => acc + (c.students_count || 0), 0));
+const totalSessions = computed(() => courses.value.reduce((acc, c) => acc + (c.sessions_count || 0), 0));
+const availableStudents = computed(() => allStudents.value);
+const isStudentAlreadyEnrolled = (studentId) => enrolledRoster.value.some((s) => s.id === studentId);
 
 const fetchData = async () => {
   loading.value = true;
@@ -778,7 +614,6 @@ const fetchData = async () => {
     courses.value = coursesRes.data.courses;
     allStudents.value = studentsRes.data.students;
 
-    // Check for open sessions in courses
     for (const c of courses.value) {
       const courseDetails = await api.get(`/courses/${c.id}`);
       const openSession = courseDetails.data.course.sessions?.find((s) => s.status === 'open');
@@ -790,6 +625,7 @@ const fetchData = async () => {
     }
   } catch (err) {
     console.error('Failed to load dashboard data:', err);
+    showToast('Failed to load dashboard data. Please refresh.', 'error');
   } finally {
     loading.value = false;
   }
@@ -803,6 +639,7 @@ onMounted(() => {
 const setCampusPreset = () => {
   sessionForm.latitude = 11.5564;
   sessionForm.longitude = 104.9282;
+  showToast('Campus preset coordinates applied.', 'info');
 };
 
 const detectLocation = () => {
@@ -811,12 +648,16 @@ const detectLocation = () => {
       (pos) => {
         sessionForm.latitude = parseFloat(pos.coords.latitude.toFixed(7));
         sessionForm.longitude = parseFloat(pos.coords.longitude.toFixed(7));
+        showToast('Location detected successfully!', 'success');
       },
       (err) => {
-        alert('Could not acquire current location: ' + err.message + '. Used campus preset instead.');
+        showToast('Could not detect location. Using campus preset.', 'warning');
         setCampusPreset();
       }
     );
+  } else {
+    showToast('Geolocation not supported. Using campus preset.', 'warning');
+    setCampusPreset();
   }
 };
 
@@ -851,6 +692,7 @@ const handleStartSession = async () => {
     }
     const { data } = await api.post('/attendance/sessions', payload);
     showStartSessionModal.value = false;
+    showToast('Session started! Launching QR screen...', 'success');
     router.push(`/teacher/session/${data.session.id}`);
   } catch (err) {
     startSessionError.value = err.response?.data?.message || 'Failed to start session.';
@@ -859,25 +701,39 @@ const handleStartSession = async () => {
   }
 };
 
+const askCloseSession = (sessionId) => {
+  showConfirm(
+    'End Attendance Session?',
+    'No new scans will be accepted after closing. This cannot be undone.',
+    'End Session',
+    () => closeSession(sessionId)
+  );
+};
+
 const closeSession = async (sessionId) => {
   try {
     await api.post(`/attendance/sessions/${sessionId}/close`);
     activeSessions.value = [];
+    showToast('Session closed successfully.', 'success');
     fetchData();
   } catch (err) {
-    alert('Failed to close session: ' + (err.response?.data?.message || err.message));
+    showToast('Failed to close session: ' + (err.response?.data?.message || err.message), 'error');
   }
 };
 
 const handleCreateCourse = async () => {
+  creatingCourse.value = true;
   try {
     await api.post('/courses', courseForm);
     showCreateCourseModal.value = false;
     courseForm.name = '';
     courseForm.schedule_info = '';
+    showToast('Course created successfully!', 'success');
     await fetchData();
   } catch (err) {
-    alert('Failed to create course: ' + (err.response?.data?.message || err.message));
+    showToast('Failed to create course: ' + (err.response?.data?.message || err.message), 'error');
+  } finally {
+    creatingCourse.value = false;
   }
 };
 
@@ -888,35 +744,47 @@ const openEnrollModal = async (course) => {
     enrolledRoster.value = data.course.students || [];
     showEnrollModal.value = true;
   } catch (err) {
-    alert('Failed to load roster: ' + err.message);
+    showToast('Failed to load roster: ' + err.message, 'error');
   }
 };
 
 const handleEnrollStudent = async () => {
   if (!newStudentId.value || !selectedCourse.value) return;
+  enrolling.value = true;
   try {
     await api.post('/enrollments', {
       course_id: selectedCourse.value.id,
       student_id: newStudentId.value,
     });
     newStudentId.value = '';
-    // Refresh roster
     const { data } = await api.get(`/courses/${selectedCourse.value.id}`);
     enrolledRoster.value = data.course.students || [];
+    showToast('Student enrolled successfully!', 'success');
     fetchData();
   } catch (err) {
-    alert('Failed to enroll student: ' + (err.response?.data?.message || err.message));
+    showToast('Failed to enroll student: ' + (err.response?.data?.message || err.message), 'error');
+  } finally {
+    enrolling.value = false;
   }
 };
 
+const askUnenroll = (student) => {
+  showConfirm(
+    'Remove Student?',
+    `Remove ${student.name} from ${selectedCourse.value?.name}?`,
+    'Remove',
+    () => handleUnenrollStudent(student.id)
+  );
+};
+
 const handleUnenrollStudent = async (studentId) => {
-  if (!confirm('Remove student from course?')) return;
   try {
     await api.delete(`/enrollments/${selectedCourse.value.id}/${studentId}`);
     enrolledRoster.value = enrolledRoster.value.filter((s) => s.id !== studentId);
+    showToast('Student removed from course.', 'success');
     fetchData();
   } catch (err) {
-    alert('Failed to remove student: ' + (err.response?.data?.message || err.message));
+    showToast('Failed to remove student: ' + (err.response?.data?.message || err.message), 'error');
   }
 };
 </script>

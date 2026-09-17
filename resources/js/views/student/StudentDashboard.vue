@@ -1,18 +1,19 @@
 <template>
   <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8">
     <!-- Top Greeting & CTA Mobile App Card -->
-    <div class="p-5 sm:p-8 rounded-3xl bg-gradient-to-br from-emerald-950/70 via-slate-900 to-teal-950/50 border border-emerald-500/30 glow-emerald flex flex-col md:flex-row md:items-center md:justify-between gap-5 relative overflow-hidden">
+    <div class="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-emerald-950/80 via-slate-900/90 to-teal-950/60 border border-emerald-500/40 glow-emerald flex flex-col md:flex-row md:items-center md:justify-between gap-5 relative overflow-hidden">
       <!-- Ambient light effect -->
-      <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent"></div>
 
       <div class="space-y-2 relative z-10">
         <div class="flex items-center space-x-2">
-          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-sm">
             Student Portal
           </span>
           <span class="text-xs text-slate-400">PIBMC Smart Campus</span>
         </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-white font-['Outfit'] tracking-tight">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-gradient-emerald font-['Outfit'] tracking-tight">
           Hello, {{ state.user?.name }}!
         </h1>
         <p class="text-xs sm:text-sm text-slate-300 max-w-xl">
@@ -22,7 +23,7 @@
 
       <router-link
         to="/student/scan"
-        class="relative z-10 w-full md:w-auto px-6 py-3.5 sm:py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-emerald-400 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold text-sm shadow-xl shadow-emerald-500/30 flex items-center justify-center space-x-2.5 active:scale-95 transition-all flex-shrink-0"
+        class="relative z-10 w-full md:w-auto px-7 py-4 rounded-2xl btn-emerald-gradient text-white font-bold text-sm flex items-center justify-center space-x-2.5 active:scale-95 transition-all flex-shrink-0"
       >
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
@@ -33,10 +34,11 @@
 
     <!-- Stats Grid (Responsive 2x2 on Mobile, 4-Col on Tablet/Desktop) -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5">
-      <div class="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 relative overflow-hidden">
+      <div class="glass-panel p-4 sm:p-5 rounded-3xl border border-emerald-500/20 relative overflow-hidden group hover:border-emerald-500/40 transition-all">
+        <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent"></div>
         <div class="flex items-center justify-between">
           <span class="text-[11px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider">Attendance</span>
-          <span class="w-2 h-2 rounded-full" :class="stats.attendance_rate >= 80 ? 'bg-emerald-400' : 'bg-amber-400'"></span>
+          <span class="w-2.5 h-2.5 rounded-full" :class="stats.attendance_rate >= 80 ? 'bg-emerald-400 shadow-sm shadow-emerald-400' : 'bg-amber-400 shadow-sm shadow-amber-400'"></span>
         </div>
         <div class="mt-2 sm:mt-3 text-2xl sm:text-3xl font-extrabold font-['Outfit']" :class="stats.attendance_rate >= 80 ? 'text-emerald-400' : 'text-amber-400'">
           {{ stats.attendance_rate }}%
@@ -44,37 +46,46 @@
         <div class="mt-1 text-[10px] sm:text-[11px] text-slate-400">Target: 80%+</div>
       </div>
 
-      <div class="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800">
+      <div class="glass-panel p-4 sm:p-5 rounded-3xl border border-emerald-500/20 relative overflow-hidden group hover:border-emerald-500/40 transition-all">
+        <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-emerald-500 to-transparent"></div>
         <div class="flex items-center justify-between">
-          <span class="text-[11px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider">Present</span>
-          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span class="text-[11px] sm:text-xs font-semibold text-emerald-400 uppercase tracking-wider">Present</span>
+          <div class="p-1.5 rounded-lg bg-emerald-500/15 text-emerald-400">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+          </div>
         </div>
         <div class="mt-2 sm:mt-3 text-2xl sm:text-3xl font-extrabold text-emerald-400 font-['Outfit']">
           {{ stats.present }}
         </div>
-        <div class="mt-1 text-[10px] sm:text-[11px] text-slate-400">On-time checks</div>
+        <div class="mt-1 text-[10px] sm:text-[11px] text-emerald-400/70">On-time checks</div>
       </div>
 
-      <div class="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800">
+      <div class="glass-panel p-4 sm:p-5 rounded-3xl border border-amber-500/20 relative overflow-hidden group hover:border-amber-500/40 transition-all">
+        <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
         <div class="flex items-center justify-between">
-          <span class="text-[11px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider">Late</span>
-          <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+          <span class="text-[11px] sm:text-xs font-semibold text-amber-400 uppercase tracking-wider">Late</span>
+          <div class="p-1.5 rounded-lg bg-amber-500/15 text-amber-400">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
         </div>
         <div class="mt-2 sm:mt-3 text-2xl sm:text-3xl font-extrabold text-amber-400 font-['Outfit']">
           {{ stats.late }}
         </div>
-        <div class="mt-1 text-[10px] sm:text-[11px] text-slate-400">Past start time</div>
+        <div class="mt-1 text-[10px] sm:text-[11px] text-amber-400/70">Past start time</div>
       </div>
 
-      <div class="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800">
+      <div class="glass-panel p-4 sm:p-5 rounded-3xl border border-rose-500/20 relative overflow-hidden group hover:border-rose-500/40 transition-all">
+        <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-rose-400 to-transparent"></div>
         <div class="flex items-center justify-between">
-          <span class="text-[11px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider">Absent</span>
-          <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+          <span class="text-[11px] sm:text-xs font-semibold text-rose-400 uppercase tracking-wider">Absent</span>
+          <div class="p-1.5 rounded-lg bg-rose-500/15 text-rose-400">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+          </div>
         </div>
-        <div class="mt-2 sm:mt-3 text-2xl sm:text-3xl font-extrabold text-slate-200 font-['Outfit']">
+        <div class="mt-2 sm:mt-3 text-2xl sm:text-3xl font-extrabold text-slate-100 font-['Outfit']">
           {{ stats.absent }} <span class="text-xs font-normal text-slate-400">/ {{ stats.excused }} exc</span>
         </div>
-        <div class="mt-1 text-[10px] sm:text-[11px] text-slate-400">Missed classes</div>
+        <div class="mt-1 text-[10px] sm:text-[11px] text-rose-400/70">Missed classes</div>
       </div>
     </div>
 
@@ -91,7 +102,16 @@
           </h2>
         </div>
 
-        <div v-if="enrolledCourses.length === 0" class="glass-panel p-8 rounded-2xl text-center border border-slate-800 text-xs text-slate-400">
+        <!-- Skeleton Loading State -->
+        <div v-if="loading" class="space-y-3">
+          <div v-for="i in 3" :key="'skel-course-' + i" class="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800/80 animate-pulse space-y-3">
+            <div class="h-4 bg-slate-800 rounded-lg w-2/3"></div>
+            <div class="h-3 bg-slate-800/60 rounded-md w-1/2"></div>
+            <div class="h-3 bg-slate-800/40 rounded-md w-3/4"></div>
+          </div>
+        </div>
+
+        <div v-else-if="enrolledCourses.length === 0" class="glass-panel p-8 rounded-2xl text-center border border-slate-800 text-xs text-slate-400">
           You are not currently enrolled in any courses.
         </div>
 
@@ -127,12 +147,36 @@
           <h2 class="text-base sm:text-lg font-bold text-white font-['Outfit']">
             Recent Attendance
           </h2>
-          <router-link to="/reports" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold active:scale-95 transition-transform">
-            View All Reports →
-          </router-link>
+          <div class="flex items-center space-x-3">
+            <button
+              @click="loadStudentData(true)"
+              :disabled="refreshing"
+              class="text-xs text-slate-400 hover:text-slate-200 flex items-center space-x-1"
+              title="Refresh"
+            >
+              <svg class="w-3.5 h-3.5" :class="{ 'animate-spin': refreshing }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span class="hidden sm:inline">Refresh</span>
+            </button>
+            <router-link to="/reports" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold active:scale-95 transition-transform">
+              View All Reports →
+            </router-link>
+          </div>
         </div>
 
-        <div v-if="records.length === 0" class="glass-panel p-8 rounded-2xl text-center border border-slate-800 text-xs text-slate-400">
+        <!-- Skeleton Loading State -->
+        <div v-if="loading" class="glass-panel p-3 sm:p-5 rounded-2xl border border-slate-800 space-y-2.5">
+          <div v-for="i in 4" :key="'skel-rec-' + i" class="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800/80 animate-pulse flex items-center justify-between gap-3">
+            <div class="space-y-2 flex-1">
+              <div class="h-3.5 bg-slate-800 rounded-md w-1/3"></div>
+              <div class="h-3 bg-slate-800/50 rounded-md w-1/4"></div>
+            </div>
+            <div class="h-5 w-16 bg-slate-800 rounded-full"></div>
+          </div>
+        </div>
+
+        <div v-else-if="records.length === 0" class="glass-panel p-8 rounded-2xl text-center border border-slate-800 text-xs text-slate-400">
           No attendance records recorded yet.
         </div>
 
@@ -175,6 +219,8 @@ const { state } = useAuth();
 
 const enrolledCourses = ref([]);
 const records = ref([]);
+const loading = ref(true);
+const refreshing = ref(false);
 const stats = ref({
   total_sessions: 0,
   present: 0,
@@ -184,8 +230,13 @@ const stats = ref({
   attendance_rate: 0,
 });
 
-const loadStudentData = async () => {
+const loadStudentData = async (isRefresh = false) => {
   if (!state.user?.id) return;
+  if (isRefresh) {
+    refreshing.value = true;
+  } else {
+    loading.value = true;
+  }
   try {
     const { data } = await api.get(`/attendance/students/${state.user.id}/history`);
     records.value = data.records || [];
@@ -193,6 +244,9 @@ const loadStudentData = async () => {
     stats.value = data.stats || stats.value;
   } catch (err) {
     console.error('Failed to load student history:', err);
+  } finally {
+    loading.value = false;
+    refreshing.value = false;
   }
 };
 

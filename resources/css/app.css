@@ -11,115 +11,167 @@
     --font-display: 'Outfit', system-ui, -apple-system, sans-serif;
 }
 
-/* Custom aesthetic styles */
 body {
-    background-color: #090d16;
-    color: #f1f5f9;
+    background-color: #050811;
+    color: #f8fafc;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
 }
 
-/* Smooth glassmorphic backdrop */
+/* ─── Dot Grid Background Texture ───────────────────────────── */
+.bg-grid-pattern {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+    background-size: 28px 28px;
+}
+
+/* ─── Modern Glassmorphic Surfaces with Inner Specular Light ─ */
 .glass-panel {
-    background: rgba(15, 23, 42, 0.75);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: linear-gradient(135deg, rgba(16, 23, 44, 0.8) 0%, rgba(8, 13, 27, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .glass-card {
-    background: rgba(30, 41, 59, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: linear-gradient(135deg, rgba(22, 32, 60, 0.6) 0%, rgba(13, 19, 38, 0.7) 100%);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Subtle glow accents */
-.glow-indigo {
-    box-shadow: 0 0 40px -10px rgba(99, 102, 241, 0.35);
+.glass-card:hover {
+    border-color: rgba(99, 102, 241, 0.35);
+    box-shadow: 0 16px 36px -10px rgba(99, 102, 241, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    transform: translateY(-2px);
 }
 
-.glow-emerald {
-    box-shadow: 0 0 40px -10px rgba(16, 185, 129, 0.35);
+/* ─── Radiant Glow Effects ─────────────────────────────────── */
+.glow-indigo  { box-shadow: 0 0 50px -8px rgba(99, 102, 241, 0.45); }
+.glow-emerald { box-shadow: 0 0 50px -8px rgba(16, 185, 129, 0.45); }
+.glow-rose    { box-shadow: 0 0 50px -8px rgba(244, 63, 94, 0.4); }
+.glow-sky     { box-shadow: 0 0 50px -8px rgba(14, 165, 233, 0.4); }
+.glow-purple  { box-shadow: 0 0 50px -8px rgba(168, 85, 247, 0.45); }
+
+/* ─── Vibrant Gradient Text Utilities ───────────────────────── */
+.text-gradient-primary {
+    background: linear-gradient(135deg, #ffffff 25%, #c7d2fe 65%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-.glow-rose {
-    box-shadow: 0 0 40px -10px rgba(244, 63, 94, 0.35);
+.text-gradient-purple {
+    background: linear-gradient(135deg, #ffffff 10%, #e9d5ff 50%, #c084fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-/* Mobile touch optimization & Ergonomics */
-* {
-    -webkit-tap-highlight-color: transparent;
+.text-gradient-emerald {
+    background: linear-gradient(135deg, #6ee7b7 0%, #10b981 50%, #06b6d4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
+
+/* ─── Premium Modern Buttons ───────────────────────────────── */
+.btn-primary-gradient {
+    background: linear-gradient(135deg, #6366f1 0%, #7c3aed 50%, #a855f7 100%);
+    box-shadow: 0 4px 20px -2px rgba(99, 102, 241, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-primary-gradient:hover {
+    box-shadow: 0 6px 30px 0 rgba(124, 58, 237, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transform: translateY(-1.5px);
+}
+
+.btn-emerald-gradient {
+    background: linear-gradient(135deg, #10b981 0%, #0d9488 50%, #0891b2 100%);
+    box-shadow: 0 4px 20px -2px rgba(16, 185, 129, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-emerald-gradient:hover {
+    box-shadow: 0 6px 30px 0 rgba(13, 148, 136, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transform: translateY(-1.5px);
+}
+
+/* ─── Ambient Glow Animation ────────────────────────────────── */
+@keyframes floatOrb1 {
+    0%, 100% { transform: translate(0px, 0px) scale(1); }
+    50%      { transform: translate(50px, 35px) scale(1.12); }
+}
+@keyframes floatOrb2 {
+    0%, 100% { transform: translate(0px, 0px) scale(1); }
+    50%      { transform: translate(-45px, -25px) scale(1.1); }
+}
+.orb-1 { animation: floatOrb1 16s ease-in-out infinite; }
+.orb-2 { animation: floatOrb2 20s ease-in-out infinite; }
+
+* { -webkit-tap-highlight-color: transparent; }
 
 html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
 }
 
-button, a, input, select, textarea {
-    touch-action: manipulation;
+button, a, input, select, textarea { touch-action: manipulation; }
+
+.pb-safe    { padding-bottom: env(safe-area-inset-bottom, 16px); }
+.pt-safe    { padding-top: env(safe-area-inset-top, 0px); }
+.bottom-safe { bottom: env(safe-area-inset-bottom, 0px); }
+
+.mobile-nav-blur {
+    background: rgba(6, 10, 22, 0.88);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* iOS Safe Area insets */
-.pb-safe {
-    padding-bottom: env(safe-area-inset-bottom, 16px);
-}
-.pt-safe {
-    padding-top: env(safe-area-inset-top, 0px);
-}
-.bottom-safe {
-    bottom: env(safe-area-inset-bottom, 0px);
-}
-
-/* Scanner Laser Line Animation */
 @keyframes laserSweep {
-    0% {
-        top: 8%;
-        opacity: 0.9;
-    }
-    50% {
-        top: 88%;
-        opacity: 1;
-    }
-    100% {
-        top: 8%;
-        opacity: 0.9;
-    }
+    0%   { top: 8%;  opacity: 0.9; }
+    50%  { top: 88%; opacity: 1; }
+    100% { top: 8%;  opacity: 0.9; }
 }
 
 .scanner-laser {
     position: absolute;
-    left: 8%;
-    right: 8%;
-    height: 2px;
+    left: 8%; right: 8%;
+    height: 2.5px;
     background: linear-gradient(90deg, transparent, #10b981, #34d399, #10b981, transparent);
-    box-shadow: 0 0 16px 3px rgba(16, 185, 129, 0.8), 0 0 6px 1px rgba(52, 211, 153, 0.9);
+    box-shadow: 0 0 18px 4px rgba(16, 185, 129, 0.85), 0 0 6px 1px rgba(52, 211, 153, 0.9);
     animation: laserSweep 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     border-radius: 9999px;
     pointer-events: none;
     z-index: 20;
 }
 
-/* Mobile App Bar Blur */
-.mobile-nav-blur {
-    background: rgba(9, 13, 22, 0.88);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+@keyframes qrReveal {
+    0%   { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+}
+.qr-reveal { animation: qrReveal 0.38s cubic-bezier(0.34, 1.2, 0.64, 1) both; }
+
+@keyframes fadeUp {
+    0%   { opacity: 0; transform: translateY(14px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.32s ease both; }
+
+@keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position:  200% 0; }
+}
+.shimmer {
+    background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.06) 50%, transparent 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2.4s infinite;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-::-webkit-scrollbar-track {
-    background: rgba(15, 23, 42, 0.5);
-}
-::-webkit-scrollbar-thumb {
-    background: rgba(100, 116, 139, 0.4);
-    border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(148, 163, 184, 0.6);
-}
-
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track  { background: rgba(8, 12, 24, 0.6); }
+::-webkit-scrollbar-thumb  { background: rgba(99, 102, 241, 0.45); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.7); }
