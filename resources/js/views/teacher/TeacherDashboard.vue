@@ -157,8 +157,22 @@
       </div>
     </div>
 
-    <!-- ── Courses Grid ────────────────────────────────────── -->
-    <div class="space-y-4">
+    <!-- ── Tab Navigation ────────────────────────────────────── -->
+    <div class="flex items-center space-x-1 p-1 bg-slate-900/60 border border-slate-800 rounded-2xl w-fit">
+      <button
+        @click="activeTab = 'courses'"
+        class="px-4 py-2 rounded-xl text-xs font-bold transition-all"
+        :class="activeTab === 'courses' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'"
+      >📚 Courses</button>
+      <button
+        @click="activeTab = 'structure'"
+        class="px-4 py-2 rounded-xl text-xs font-bold transition-all"
+        :class="activeTab === 'structure' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-400 hover:text-white'"
+      >🏛 Departments & Majors</button>
+    </div>
+
+    <!-- ── TAB: Courses ──────────────────────────────────────── -->
+    <div v-if="activeTab === 'courses'" class="space-y-4">
       <div class="flex items-center justify-between">
         <h2 class="text-xl font-bold text-white font-['Outfit']">Your Courses</h2>
         <span class="text-xs text-slate-500">{{ courses.length }} course{{ courses.length !== 1 ? 's' : '' }}</span>
@@ -182,55 +196,150 @@
         </div>
         <h3 class="text-base font-bold text-white">No courses yet</h3>
         <p class="text-sm text-slate-400 mt-1">Create your first course to start taking attendance</p>
-        <button
-          @click="showCreateCourseModal = true"
-          class="mt-5 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/25 transition-colors"
-        >
+        <button @click="showCreateCourseModal = true" class="mt-5 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/25 transition-colors">
           Create First Course
         </button>
       </div>
 
       <!-- Course cards -->
       <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div
-          v-for="c in courses"
-          :key="c.id"
-          class="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between group"
-        >
+        <div v-for="c in courses" :key="c.id"
+          class="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between group">
           <div>
+            <!-- Major / Dept breadcrumb -->
+            <div v-if="c.major" class="flex items-center space-x-1 text-[10px] text-slate-500 mb-2">
+              <span>{{ c.major?.department?.name }}</span>
+              <span>›</span>
+              <span class="text-purple-400 font-semibold">{{ c.major?.name }}</span>
+            </div>
             <div class="flex items-start justify-between gap-2">
               <h3 class="text-lg font-bold text-white font-['Outfit'] leading-tight">{{ c.name }}</h3>
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 whitespace-nowrap flex-shrink-0">
-                {{ c.students_count || 0 }} Students
-              </span>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 whitespace-nowrap flex-shrink-0">{{ c.students_count || 0 }} Students</span>
             </div>
             <p class="mt-2 text-xs text-slate-400 flex items-center space-x-1.5">
-              <svg class="w-4 h-4 text-slate-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              <svg class="w-4 h-4 text-slate-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               <span>{{ c.schedule_info || 'Schedule unassigned' }}</span>
             </p>
           </div>
 
-          <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between gap-3">
-            <button
-              @click="openEnrollModal(c)"
-              class="text-xs font-medium text-slate-300 hover:text-white px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 transition-colors flex items-center space-x-1.5"
-            >
-              <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
-              </svg>
-              <span>Manage Students</span>
-            </button>
-
-            <button
-              @click="openStartSessionModal(c.id)"
-              class="text-xs font-semibold px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-md shadow-indigo-600/20 transition-all flex items-center space-x-1.5 active:scale-95"
-            >
-              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-              </svg>
+          <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between gap-2 flex-wrap">
+            <div class="flex items-center gap-2">
+              <button @click="openEnrollModal(c)" class="text-xs font-medium text-slate-300 hover:text-white px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 transition-colors flex items-center space-x-1.5">
+                <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                <span>Students</span>
+              </button>
+              <button @click="openEditCourseModal(c)" class="text-xs font-medium text-slate-300 hover:text-white px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 transition-colors flex items-center space-x-1.5">
+                <svg class="w-3.5 h-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span>Edit</span>
+              </button>
+              <button @click="askDeleteCourse(c)" class="text-xs font-medium text-rose-400 hover:text-rose-300 px-3 py-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
+            <button @click="openStartSessionModal(c.id)" class="text-xs font-semibold px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-md shadow-indigo-600/20 transition-all flex items-center space-x-1.5 active:scale-95">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg>
               <span>Start QR Session</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: Departments & Majors ─────────────────────────── -->
+    <div v-if="activeTab === 'structure'" class="space-y-6">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-bold text-white font-['Outfit']">Academic Structure</h2>
+        <button @click="showAddDeptForm = !showAddDeptForm" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold flex items-center space-x-1.5 transition-all active:scale-95">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          <span>Add Department</span>
+        </button>
+      </div>
+
+      <!-- Add Department inline form -->
+      <div v-if="showAddDeptForm" class="glass-panel p-5 rounded-2xl border border-purple-500/30 space-y-3">
+        <h3 class="text-sm font-bold text-white">New Department</h3>
+        <input v-model="deptForm.name" type="text" placeholder="Department name (e.g. Faculty of Engineering)" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50"/>
+        <input v-model="deptForm.description" type="text" placeholder="Description (optional)" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50"/>
+        <div class="flex gap-2">
+          <button @click="handleCreateDept" :disabled="!deptForm.name || savingDept" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white text-xs font-semibold">{{ savingDept ? 'Saving...' : 'Create Department' }}</button>
+          <button @click="showAddDeptForm = false; deptForm.name = ''; deptForm.description = ''" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div v-if="deptLoading" class="space-y-3">
+        <div v-for="n in 3" :key="n" class="glass-panel p-5 rounded-2xl border border-slate-800 animate-pulse h-16"></div>
+      </div>
+
+      <!-- Empty -->
+      <div v-else-if="departments.length === 0" class="glass-panel p-12 rounded-2xl text-center border border-slate-800 border-dashed">
+        <div class="text-4xl mb-3">🏛</div>
+        <h3 class="text-sm font-bold text-white">No departments yet</h3>
+        <p class="text-xs text-slate-400 mt-1">Add a department to start organizing your academic structure</p>
+      </div>
+
+      <!-- Department accordion list -->
+      <div v-else class="space-y-4">
+        <div v-for="dept in departments" :key="dept.id" class="glass-panel rounded-2xl border border-slate-800 overflow-hidden">
+          <!-- Dept header -->
+          <div class="p-4 flex items-center justify-between gap-3">
+            <div class="flex items-center space-x-3 flex-1 min-w-0 cursor-pointer" @click="toggleDept(dept.id)">
+              <div class="w-8 h-8 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 flex-shrink-0">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+              </div>
+              <div class="min-w-0">
+                <div v-if="editingDeptId !== dept.id">
+                  <div class="text-sm font-bold text-white">{{ dept.name }}</div>
+                  <div class="text-[11px] text-slate-400">{{ dept.majors_count || 0 }} major{{ dept.majors_count !== 1 ? 's' : '' }}</div>
+                </div>
+                <div v-else class="flex items-center gap-2" @click.stop>
+                  <input v-model="editDeptForm.name" class="px-3 py-1.5 rounded-lg bg-slate-950 border border-purple-500/50 text-white text-sm focus:outline-none flex-1 min-w-0"/>
+                  <button @click="handleUpdateDept(dept)" class="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold">Save</button>
+                  <button @click="editingDeptId = null" class="px-2 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs">✕</button>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 flex-shrink-0">
+              <button @click.stop="startEditDept(dept)" class="p-1.5 rounded-lg hover:bg-slate-800 text-amber-400 transition-colors"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+              <button @click.stop="askDeleteDept(dept)" class="p-1.5 rounded-lg hover:bg-slate-800 text-rose-400 transition-colors"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+              <button @click.stop="toggleDept(dept.id)" class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 transition-colors">
+                <svg class="w-3.5 h-3.5 transition-transform" :class="expandedDepts.includes(dept.id) ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Majors list (collapsible) -->
+          <div v-if="expandedDepts.includes(dept.id)" class="border-t border-slate-800/60 bg-slate-950/30 p-4 space-y-3">
+            <div v-for="major in dept.majors" :key="major.id" class="flex items-center justify-between gap-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800">
+              <div class="flex items-center space-x-2.5 flex-1 min-w-0">
+                <div class="w-6 h-6 rounded-lg bg-indigo-500/15 flex items-center justify-center text-indigo-400 flex-shrink-0">
+                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13"/></svg>
+                </div>
+                <div v-if="editingMajorId !== major.id" class="min-w-0">
+                  <div class="text-xs font-semibold text-white">{{ major.name }}</div>
+                  <div class="text-[10px] text-slate-500">{{ major.courses_count || 0 }} course{{ major.courses_count !== 1 ? 's' : '' }}</div>
+                </div>
+                <div v-else class="flex items-center gap-2 flex-1">
+                  <input v-model="editMajorForm.name" class="px-3 py-1 rounded-lg bg-slate-950 border border-indigo-500/50 text-white text-xs focus:outline-none flex-1 min-w-0"/>
+                  <button @click="handleUpdateMajor(major)" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">Save</button>
+                  <button @click="editingMajorId = null" class="px-2 py-1 rounded-lg bg-slate-800 text-slate-400 text-xs">✕</button>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0">
+                <button @click="startEditMajor(major)" class="p-1 rounded-lg hover:bg-slate-800 text-amber-400 transition-colors"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+                <button @click="askDeleteMajor(major)" class="p-1 rounded-lg hover:bg-slate-800 text-rose-400 transition-colors"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+              </div>
+            </div>
+
+            <!-- Add Major inline -->
+            <div v-if="addMajorDeptId === dept.id" class="flex items-center gap-2 mt-2">
+              <input v-model="newMajorName" type="text" placeholder="Major name (e.g. Computer Science)" class="flex-1 px-3 py-2 rounded-xl bg-slate-900 border border-indigo-500/40 text-white text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500"/>
+              <button @click="handleCreateMajor(dept.id)" :disabled="!newMajorName || savingMajor" class="px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-semibold">{{ savingMajor ? '...' : 'Add' }}</button>
+              <button @click="addMajorDeptId = null; newMajorName = ''" class="px-2 py-2 rounded-xl bg-slate-800 text-slate-400 text-xs">✕</button>
+            </div>
+            <button v-else @click="addMajorDeptId = dept.id; newMajorName = ''" class="w-full py-2 rounded-xl border border-dashed border-slate-700 text-slate-400 hover:text-white hover:border-slate-600 text-xs font-medium transition-colors flex items-center justify-center space-x-1">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              <span>Add Major</span>
             </button>
           </div>
         </div>
@@ -307,11 +416,11 @@
                 </button>
               </div>
               <div class="grid grid-cols-2 gap-3">
-                <input v-model.number="sessionForm.latitude" type="number" step="0.0000001" :required="sessionForm.verification_mode === 'location'" placeholder="Latitude (11.5564)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/50"/>
-                <input v-model.number="sessionForm.longitude" type="number" step="0.0000001" :required="sessionForm.verification_mode === 'location'" placeholder="Longitude (104.9282)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/50"/>
+                <input v-model.number="sessionForm.latitude" type="number" step="0.0000001" :required="sessionForm.verification_mode === 'location'" placeholder="Latitude (13.5875483)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/50"/>
+                <input v-model.number="sessionForm.longitude" type="number" step="0.0000001" :required="sessionForm.verification_mode === 'location'" placeholder="Longitude (102.942477)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500/50"/>
               </div>
               <button type="button" @click="setCampusPreset" class="mt-2 text-[11px] text-indigo-400 hover:text-indigo-300 underline">
-                Use Campus Preset (11.55640, 104.92820)
+                Use Campus Preset (13.5875483, 102.942477)
               </button>
             </div>
 
@@ -355,17 +464,17 @@
       </div>
     </div>
 
-    <!-- ── Modal: Create Course ────────────────────────────── -->
+    <!-- ── Modal: Create/Edit Course ───────────────────────── -->
     <div v-if="showCreateCourseModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md">
       <div class="glass-panel w-full max-w-md p-5 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl relative">
-        <button @click="showCreateCourseModal = false" class="absolute top-5 right-5 text-slate-400 hover:text-white active:scale-90 transition-transform p-1">
+        <button @click="closeCourseModal" class="absolute top-5 right-5 text-slate-400 hover:text-white active:scale-90 transition-transform p-1">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
-        <h3 class="text-xl font-bold text-white font-['Outfit'] mb-1">Create New Course</h3>
-        <p class="text-xs text-slate-400 mb-5">Add a course section to start enrolling students and tracking attendance</p>
+        <h3 class="text-xl font-bold text-white font-['Outfit'] mb-1">{{ editingCourse ? 'Edit Course' : 'Create New Course' }}</h3>
+        <p class="text-xs text-slate-400 mb-5">{{ editingCourse ? 'Update course details' : 'Add a course section to start enrolling students and tracking attendance' }}</p>
 
-        <form @submit.prevent="handleCreateCourse" class="space-y-4">
+        <form @submit.prevent="editingCourse ? handleUpdateCourse() : handleCreateCourse()" class="space-y-4">
           <div>
             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Course Name & Code</label>
             <input v-model="courseForm.name" type="text" required placeholder="e.g. CS301 - Web & Mobile Cloud Applications" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50"/>
@@ -374,11 +483,20 @@
             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Schedule / Room Info</label>
             <input v-model="courseForm.schedule_info" type="text" placeholder="e.g. Mon / Wed 08:30 AM (Room 402)" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50"/>
           </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Major <span class="text-slate-500 normal-case">(optional)</span></label>
+            <select v-model="courseForm.major_id" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
+              <option value="">-- No Major --</option>
+              <optgroup v-for="dept in departments" :key="dept.id" :label="dept.name">
+                <option v-for="m in dept.majors" :key="m.id" :value="m.id">{{ m.name }}</option>
+              </optgroup>
+            </select>
+          </div>
           <div class="pt-4 flex items-center justify-end space-x-3">
-            <button type="button" @click="showCreateCourseModal = false" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">Cancel</button>
+            <button type="button" @click="closeCourseModal" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">Cancel</button>
             <button type="submit" :disabled="creatingCourse" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 disabled:opacity-50 flex items-center space-x-2">
               <svg v-if="creatingCourse" class="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
-              <span>{{ creatingCourse ? 'Creating...' : 'Create Course' }}</span>
+              <span>{{ creatingCourse ? 'Saving...' : (editingCourse ? 'Save Changes' : 'Create Course') }}</span>
             </button>
           </div>
         </form>
@@ -404,7 +522,7 @@
             <select v-model="newStudentId" class="flex-1 px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:outline-none">
               <option value="">-- Select Student --</option>
               <option v-for="s in availableStudents" :key="s.id" :value="s.id" :disabled="isStudentAlreadyEnrolled(s.id)">
-                {{ s.name }} ({{ s.email }}) {{ isStudentAlreadyEnrolled(s.id) ? '— [Enrolled]' : '' }}
+                {{ s.name }} (@{{ s.username }}) {{ isStudentAlreadyEnrolled(s.id) ? '— [Enrolled]' : '' }}
               </option>
             </select>
             <button @click="handleEnrollStudent" :disabled="!newStudentId || enrolling" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold whitespace-nowrap active:scale-95 transition-all flex items-center justify-center gap-1.5">
@@ -417,14 +535,44 @@
         <!-- Enrolled list -->
         <div class="flex-1 overflow-y-auto pr-1 space-y-2">
           <div v-for="s in enrolledRoster" :key="s.id"
-            class="p-3 rounded-xl bg-slate-900/50 border border-slate-800/80 flex items-center justify-between hover:border-slate-700/80 transition-colors">
-            <div>
+            class="p-3 rounded-xl bg-slate-900/50 border border-slate-800/80 flex items-start justify-between gap-3 hover:border-slate-700/80 transition-colors">
+            <div class="min-w-0 flex-1">
               <div class="text-sm font-semibold text-white">{{ s.name }}</div>
-              <div class="text-xs text-slate-400">{{ s.email }}</div>
+              <div class="text-xs text-slate-400">@{{ s.username }}</div>
+              <!-- Sex + Device Badges row -->
+              <div class="mt-1.5 flex flex-wrap items-center gap-1.5">
+                <!-- Sex badge -->
+                <span v-if="s.sex === 'male'"
+                  class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/15 text-sky-300 border border-sky-500/30">
+                  <span>♂</span><span>Male</span>
+                </span>
+                <span v-else-if="s.sex === 'female'"
+                  class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-300 border border-rose-500/30">
+                  <span>♀</span><span>Female</span>
+                </span>
+                <!-- Device badge -->
+                <span v-if="s.device_id"
+                  class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                  <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                  <span>{{ s.device_name || 'Locked device' }}</span>
+                </span>
+                <span v-else
+                  class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-700/50 text-slate-400 border border-slate-700/50">
+                  <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+                  <span>No device yet</span>
+                </span>
+              </div>
             </div>
-            <button @click="askUnenroll(s)" class="text-xs text-rose-400 hover:text-rose-300 px-2.5 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 transition-colors">
-              Remove
-            </button>
+            <div class="flex flex-col items-end gap-1.5 flex-shrink-0">
+              <button v-if="s.device_id" @click="askResetDevice(s)"
+                class="text-[10px] text-amber-400 hover:text-amber-300 px-2 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 transition-colors whitespace-nowrap flex items-center space-x-1">
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                <span>Reset Device</span>
+              </button>
+              <button @click="askUnenroll(s)" class="text-[10px] text-rose-400 hover:text-rose-300 px-2 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 transition-colors whitespace-nowrap">
+                Remove
+              </button>
+            </div>
           </div>
 
           <div v-if="enrolledRoster.length === 0" class="text-center py-8 space-y-2">
@@ -587,13 +735,30 @@ const selectedCourse = ref(null);
 const enrolledRoster = ref([]);
 const newStudentId = ref('');
 
-const courseForm = reactive({ name: '', schedule_info: '' });
+const courseForm = reactive({ name: '', schedule_info: '', major_id: '' });
+const editingCourse = ref(null);
+
+// Departments & Majors state
+const departments = ref([]);
+const deptLoading = ref(false);
+const activeTab = ref('courses');
+const expandedDepts = ref([]);
+const showAddDeptForm = ref(false);
+const deptForm = reactive({ name: '', description: '' });
+const savingDept = ref(false);
+const editingDeptId = ref(null);
+const editDeptForm = reactive({ name: '', description: '' });
+const addMajorDeptId = ref(null);
+const newMajorName = ref('');
+const savingMajor = ref(false);
+const editingMajorId = ref(null);
+const editMajorForm = reactive({ name: '' });
 
 const sessionForm = reactive({
   course_id: '',
   verification_mode: 'location',
-  latitude: 11.5564,
-  longitude: 104.9282,
+  latitude: 13.5875483,
+  longitude: 102.942477,
   radius_meters: 100,
   require_wifi: false,
   wifi_subnet: '192.168.1.0/24',
@@ -603,6 +768,181 @@ const totalEnrolledStudents = computed(() => courses.value.reduce((acc, c) => ac
 const totalSessions = computed(() => courses.value.reduce((acc, c) => acc + (c.sessions_count || 0), 0));
 const availableStudents = computed(() => allStudents.value);
 const isStudentAlreadyEnrolled = (studentId) => enrolledRoster.value.some((s) => s.id === studentId);
+
+// ── Departments CRUD ──────────────────────────────────────────
+const fetchDepartments = async () => {
+  deptLoading.value = true;
+  try {
+    const { data } = await api.get('/departments');
+    departments.value = data.departments;
+  } catch (err) {
+    console.error('Failed to load departments:', err);
+  } finally {
+    deptLoading.value = false;
+  }
+};
+
+const toggleDept = (id) => {
+  const idx = expandedDepts.value.indexOf(id);
+  if (idx === -1) expandedDepts.value.push(id);
+  else expandedDepts.value.splice(idx, 1);
+};
+
+const handleCreateDept = async () => {
+  if (!deptForm.name) return;
+  savingDept.value = true;
+  try {
+    const { data } = await api.post('/departments', { name: deptForm.name, description: deptForm.description });
+    departments.value.push({ ...data.department, majors: [] });
+    deptForm.name = '';
+    deptForm.description = '';
+    showAddDeptForm.value = false;
+    showToast('Department created!', 'success');
+  } catch (err) {
+    showToast(err.response?.data?.message || 'Failed to create department.', 'error');
+  } finally {
+    savingDept.value = false;
+  }
+};
+
+const startEditDept = (dept) => {
+  editingDeptId.value = dept.id;
+  editDeptForm.name = dept.name;
+  editDeptForm.description = dept.description || '';
+};
+
+const handleUpdateDept = async (dept) => {
+  try {
+    const { data } = await api.put(`/departments/${dept.id}`, editDeptForm);
+    const idx = departments.value.findIndex((d) => d.id === dept.id);
+    if (idx !== -1) departments.value[idx] = { ...departments.value[idx], ...data.department };
+    editingDeptId.value = null;
+    showToast('Department updated!', 'success');
+  } catch (err) {
+    showToast(err.response?.data?.message || 'Failed to update department.', 'error');
+  }
+};
+
+const askDeleteDept = (dept) => {
+  showConfirm('Delete Department?', `Delete "${dept.name}" and all its majors? Courses in this department will become unassigned.`, 'Delete', () => handleDeleteDept(dept.id));
+};
+
+const handleDeleteDept = async (id) => {
+  try {
+    await api.delete(`/departments/${id}`);
+    departments.value = departments.value.filter((d) => d.id !== id);
+    showToast('Department deleted.', 'success');
+    fetchData(); // refresh courses (their major may be gone)
+  } catch (err) {
+    showToast('Failed to delete department.', 'error');
+  }
+};
+
+// ── Majors CRUD ────────────────────────────────────────────────
+const handleCreateMajor = async (deptId) => {
+  if (!newMajorName.value) return;
+  savingMajor.value = true;
+  try {
+    const { data } = await api.post('/majors', { department_id: deptId, name: newMajorName.value });
+    const dept = departments.value.find((d) => d.id === deptId);
+    if (dept) dept.majors.push({ ...data.major, courses_count: 0 });
+    newMajorName.value = '';
+    addMajorDeptId.value = null;
+    showToast('Major created!', 'success');
+  } catch (err) {
+    showToast(err.response?.data?.message || 'Failed to create major.', 'error');
+  } finally {
+    savingMajor.value = false;
+  }
+};
+
+const startEditMajor = (major) => {
+  editingMajorId.value = major.id;
+  editMajorForm.name = major.name;
+};
+
+const handleUpdateMajor = async (major) => {
+  try {
+    const { data } = await api.put(`/majors/${major.id}`, { name: editMajorForm.name, department_id: major.department_id });
+    for (const dept of departments.value) {
+      const idx = dept.majors.findIndex((m) => m.id === major.id);
+      if (idx !== -1) { dept.majors[idx] = { ...dept.majors[idx], ...data.major }; break; }
+    }
+    editingMajorId.value = null;
+    showToast('Major updated!', 'success');
+  } catch (err) {
+    showToast(err.response?.data?.message || 'Failed to update major.', 'error');
+  }
+};
+
+const askDeleteMajor = (major) => {
+  showConfirm('Delete Major?', `Delete "${major.name}"? Courses in this major will become unassigned.`, 'Delete', () => handleDeleteMajor(major));
+};
+
+const handleDeleteMajor = async (major) => {
+  try {
+    await api.delete(`/majors/${major.id}`);
+    for (const dept of departments.value) {
+      dept.majors = dept.majors.filter((m) => m.id !== major.id);
+    }
+    showToast('Major deleted.', 'success');
+    fetchData();
+  } catch (err) {
+    showToast('Failed to delete major.', 'error');
+  }
+};
+
+// ── Course Edit/Delete ─────────────────────────────────────────
+const openEditCourseModal = (course) => {
+  editingCourse.value = course;
+  courseForm.name = course.name;
+  courseForm.schedule_info = course.schedule_info || '';
+  courseForm.major_id = course.major_id || '';
+  showCreateCourseModal.value = true;
+};
+
+const closeCourseModal = () => {
+  showCreateCourseModal.value = false;
+  editingCourse.value = null;
+  courseForm.name = '';
+  courseForm.schedule_info = '';
+  courseForm.major_id = '';
+};
+
+const handleUpdateCourse = async () => {
+  creatingCourse.value = true;
+  try {
+    const { data } = await api.put(`/courses/${editingCourse.value.id}`, {
+      name: courseForm.name,
+      schedule_info: courseForm.schedule_info,
+      major_id: courseForm.major_id || null,
+    });
+    const idx = courses.value.findIndex((c) => c.id === editingCourse.value.id);
+    if (idx !== -1) courses.value[idx] = { ...courses.value[idx], ...data.course };
+    closeCourseModal();
+    showToast('Course updated!', 'success');
+    fetchDepartments();
+  } catch (err) {
+    showToast(err.response?.data?.message || 'Failed to update course.', 'error');
+  } finally {
+    creatingCourse.value = false;
+  }
+};
+
+const askDeleteCourse = (course) => {
+  showConfirm('Delete Course?', `Delete "${course.name}"? All sessions and enrollment data will be lost.`, 'Delete', () => handleDeleteCourse(course.id));
+};
+
+const handleDeleteCourse = async (id) => {
+  try {
+    await api.delete(`/courses/${id}`);
+    courses.value = courses.value.filter((c) => c.id !== id);
+    showToast('Course deleted.', 'success');
+    fetchDepartments();
+  } catch (err) {
+    showToast('Failed to delete course.', 'error');
+  }
+};
 
 const fetchData = async () => {
   loading.value = true;
@@ -633,12 +973,13 @@ const fetchData = async () => {
 
 onMounted(() => {
   fetchData();
+  fetchDepartments();
   fetchTelegramStatus();
 });
 
 const setCampusPreset = () => {
-  sessionForm.latitude = 11.5564;
-  sessionForm.longitude = 104.9282;
+  sessionForm.latitude = 13.5875483;
+  sessionForm.longitude = 102.942477;
   showToast('Campus preset coordinates applied.', 'info');
 };
 
@@ -728,8 +1069,10 @@ const handleCreateCourse = async () => {
     showCreateCourseModal.value = false;
     courseForm.name = '';
     courseForm.schedule_info = '';
+    courseForm.major_id = '';
     showToast('Course created successfully!', 'success');
     await fetchData();
+    fetchDepartments();
   } catch (err) {
     showToast('Failed to create course: ' + (err.response?.data?.message || err.message), 'error');
   } finally {
@@ -785,6 +1128,34 @@ const handleUnenrollStudent = async (studentId) => {
     fetchData();
   } catch (err) {
     showToast('Failed to remove student: ' + (err.response?.data?.message || err.message), 'error');
+  }
+};
+
+const askResetDevice = (student) => {
+  showConfirm(
+    'Reset Device Lock?',
+    `Remove the device lock for ${student.name}? They will be able to log in from a new device next time.`,
+    'Reset',
+    () => handleResetDevice(student)
+  );
+};
+
+const handleResetDevice = async (student) => {
+  try {
+    const { data } = await api.post(`/students/${student.id}/reset-device`);
+    // Update the student entry in the roster
+    const idx = enrolledRoster.value.findIndex((s) => s.id === student.id);
+    if (idx !== -1) {
+      enrolledRoster.value[idx] = { ...enrolledRoster.value[idx], device_id: null, device_name: null, device_registered_at: null };
+    }
+    // Also update allStudents list
+    const globalIdx = allStudents.value.findIndex((s) => s.id === student.id);
+    if (globalIdx !== -1) {
+      allStudents.value[globalIdx] = { ...allStudents.value[globalIdx], device_id: null, device_name: null, device_registered_at: null };
+    }
+    showToast(data.message || `Device lock for ${student.name} has been reset.`, 'success');
+  } catch (err) {
+    showToast('Failed to reset device: ' + (err.response?.data?.message || err.message), 'error');
   }
 };
 </script>

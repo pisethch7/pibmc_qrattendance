@@ -8,12 +8,16 @@ const api = axios.create({
     },
 });
 
-// Request interceptor to attach bearer token
+import { getDeviceId, getDeviceName } from '../utils/device';
+
+// Request interceptor to attach bearer token and device headers
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('pibmc_token');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
+    config.headers['X-Device-Id'] = getDeviceId();
+    config.headers['X-Device-Name'] = getDeviceName();
     return config;
 });
 

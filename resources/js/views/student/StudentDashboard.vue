@@ -19,6 +19,29 @@
         <p class="text-xs sm:text-sm text-slate-300 max-w-xl">
           Check in on time to maintain high attendance records. Tap below when class starts to scan the projector QR code.
         </p>
+        <!-- Profile Badges: Sex + Registered Device -->
+        <div class="flex flex-wrap items-center gap-2 pt-1">
+          <!-- Sex badge -->
+          <span v-if="state.user?.sex === 'male'"
+            class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-sky-500/15 text-sky-300 border border-sky-500/30">
+            <span>♂</span><span>Male</span>
+          </span>
+          <span v-else-if="state.user?.sex === 'female'"
+            class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/30">
+            <span>♀</span><span>Female</span>
+          </span>
+          <!-- Registered Device Badge -->
+          <span v-if="state.user?.device_name || state.user?.device_id"
+            class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            <span>Locked to: {{ state.user?.device_name || 'This device' }}</span>
+          </span>
+          <span v-else
+            class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-slate-700/50 text-slate-400 border border-slate-700/50">
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+            <span>No device registered yet</span>
+          </span>
+        </div>
       </div>
 
       <router-link
@@ -121,6 +144,12 @@
             :key="c.id"
             class="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 hover:border-slate-700 space-y-2.5 transition-colors"
           >
+            <!-- Major / Dept breadcrumb -->
+            <div v-if="c.major" class="flex items-center space-x-1 text-[10px] text-slate-400 mb-1">
+              <span>{{ c.major?.department?.name }}</span>
+              <span class="text-slate-600">›</span>
+              <span class="text-purple-400 font-semibold">{{ c.major?.name }}</span>
+            </div>
             <div class="flex items-start justify-between gap-2">
               <h3 class="text-sm sm:text-base font-bold text-white">
                 {{ c.name }}

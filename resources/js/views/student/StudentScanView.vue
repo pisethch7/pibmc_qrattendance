@@ -573,8 +573,8 @@ const requestLocation = () => {
 };
 
 const simulateCampusCoordinates = () => {
-  latitude.value = 11.5564000;
-  longitude.value = 104.9282000;
+  latitude.value = 13.5875483;
+  longitude.value = 102.942477;
   accuracy.value = 5;
   gpsLocked.value = true;
 };

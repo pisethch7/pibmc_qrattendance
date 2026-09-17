@@ -1,5 +1,6 @@
 import { reactive, computed } from 'vue';
 import api from '../services/api';
+import { getDeviceId, getDeviceName } from '../utils/device';
 
 const state = reactive({
     user: JSON.parse(localStorage.getItem('pibmc_user') || 'null'),
@@ -27,26 +28,39 @@ export const useAuth = () => {
         localStorage.removeItem('pibmc_token');
     };
 
-    const login = async (email, password) => {
+    const login = async (username, password) => {
         state.loading = true;
         state.error = null;
         try {
-            const { data } = await api.post('/auth/login', { email, password });
+            const { data } = await api.post('/auth/login', {
+                username,
+                password,
+                device_id: getDeviceId(),
+                device_name: getDeviceName(),
+            });
             setAuth(data.user, data.token);
             return data;
         } catch (err) {
-            state.error = err.response?.data?.message || 'Login failed.';
+            state.error = err.response?.data?.errors?.device?.[0] || err.response?.data?.message || 'Login failed.';
             throw err;
         } finally {
             state.loading = false;
         }
     };
 
-    const register = async (name, email, password, role) => {
+    const register = async (name, username, password, role, sex = null) => {
         state.loading = true;
         state.error = null;
         try {
-            const { data } = await api.post('/auth/register', { name, email, password, role });
+            const { data } = await api.post('/auth/register', {
+                name,
+                username,
+                password,
+                role,
+                ...(sex ? { sex } : {}),
+                device_id: getDeviceId(),
+                device_name: getDeviceName(),
+            });
             setAuth(data.user, data.token);
             return data;
         } catch (err) {

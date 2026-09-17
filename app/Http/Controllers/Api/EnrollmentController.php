@@ -89,17 +89,48 @@ class EnrollmentController extends Controller
     }
 
     /**
-     * List all students in system (for teacher enrollment selection).
+     * List all students in system (for teacher enrollment selection and device management).
      */
     public function students(): JsonResponse
     {
         $students = User::where('role', 'student')
-            ->select('id', 'name', 'email')
+            ->select('id', 'name', 'username', 'email', 'sex', 'device_id', 'device_name', 'device_registered_at')
             ->orderBy('name')
             ->get();
 
         return response()->json([
             'students' => $students,
+        ]);
+    }
+
+    /**
+     * Reset a student's bound device (teachers only).
+     */
+    public function resetStudentDevice(Request $request, User $student): JsonResponse
+    {
+        $user = $request->user();
+
+        if (!$user->isTeacher()) {
+            return response()->json(['message' => 'Only teachers can reset student devices.'], 403);
+        }
+
+        if (!$student->isStudent()) {
+            return response()->json(['message' => 'Target user is not a student.'], 422);
+        }
+
+        $student->resetDevice();
+
+        return response()->json([
+            'success' => true,
+            'message' => "Device lock for {$student->name} has been reset. The student can now register and log in on a new device.",
+            'student' => [
+                'id' => $student->id,
+                'name' => $student->name,
+                'email' => $student->email,
+                'device_id' => $student->device_id,
+                'device_name' => $student->device_name,
+                'device_registered_at' => $student->device_registered_at,
+            ],
         ]);
     }
 }

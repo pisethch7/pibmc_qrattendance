@@ -24,6 +24,8 @@
         </div>
 
         <form @submit.prevent="handleSubmit" class="space-y-4">
+
+          <!-- Full Name -->
           <div>
             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
               Full Name
@@ -32,24 +34,27 @@
               v-model="form.name"
               type="text"
               required
-              placeholder="e.g. Alice Smith"
+              placeholder="e.g. Chan Piseth"
               class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all text-sm"
             />
           </div>
 
+          <!-- Username -->
           <div>
             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-              Email Address
+              Username
             </label>
             <input
-              v-model="form.email"
-              type="email"
+              v-model="form.username"
+              type="text"
               required
-              placeholder="you@pibmc.edu.kh"
+              autocomplete="username"
+              placeholder="e.g. chan_piseth (letters, numbers, _ .)"
               class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all text-sm"
             />
           </div>
 
+          <!-- Password -->
           <div>
             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
               Password
@@ -64,6 +69,7 @@
             />
           </div>
 
+          <!-- Role -->
           <div>
             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
               Select Your Role
@@ -95,9 +101,38 @@
             </div>
           </div>
 
+          <!-- Sex (students only) -->
+          <div v-if="form.role === 'student'">
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+              Sex
+            </label>
+            <div class="grid grid-cols-2 gap-3">
+              <label
+                class="flex items-center justify-center space-x-2 p-3 rounded-xl border cursor-pointer transition-all"
+                :class="form.sex === 'male' ? 'bg-sky-500/15 border-sky-500/50 text-sky-300 ring-1 ring-sky-500/30' : 'bg-slate-900/50 border-slate-800 text-slate-400 hover:border-slate-700'"
+              >
+                <input type="radio" v-model="form.sex" value="male" class="sr-only" />
+                <span class="text-base">♂</span>
+                <span class="text-xs font-semibold">Male</span>
+              </label>
+
+              <label
+                class="flex items-center justify-center space-x-2 p-3 rounded-xl border cursor-pointer transition-all"
+                :class="form.sex === 'female' ? 'bg-rose-500/15 border-rose-500/50 text-rose-300 ring-1 ring-rose-500/30' : 'bg-slate-900/50 border-slate-800 text-slate-400 hover:border-slate-700'"
+              >
+                <input type="radio" v-model="form.sex" value="female" class="sr-only" />
+                <span class="text-base">♀</span>
+                <span class="text-xs font-semibold">Female</span>
+              </label>
+            </div>
+            <p v-if="form.role === 'student' && !form.sex" class="mt-1.5 text-[10px] text-slate-500">
+              * Please select your sex to continue
+            </p>
+          </div>
+
           <button
             type="submit"
-            :disabled="loading"
+            :disabled="loading || (form.role === 'student' && !form.sex)"
             class="w-full mt-2 py-3.5 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-sm shadow-lg shadow-purple-600/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
           >
             <svg v-if="loading" class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
@@ -131,9 +166,10 @@ const logoUrl = '/Institute_logo.png';
 
 const form = reactive({
   name: '',
-  email: '',
+  username: '',
   password: '',
   role: 'student',
+  sex: '',
 });
 
 const loading = ref(false);
@@ -143,14 +179,17 @@ const handleSubmit = async () => {
   loading.value = true;
   error.value = '';
   try {
-    await register(form.name, form.email, form.password, form.role);
+    await register(form.name, form.username, form.password, form.role, form.sex || null);
     if (isTeacher.value) {
       router.push('/teacher');
     } else {
       router.push('/student');
     }
   } catch (err) {
-    error.value = err.response?.data?.message || err.message || 'Registration failed.';
+    error.value = err.response?.data?.message
+      || Object.values(err.response?.data?.errors || {}).flat()[0]
+      || err.message
+      || 'Registration failed.';
   } finally {
     loading.value = false;
   }

@@ -20,8 +20,22 @@
           </p>
         </div>
 
-        <!-- Error alert -->
-        <div v-if="error" class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm flex items-start space-x-3">
+        <!-- Device Lock Error -->
+        <div v-if="isDeviceError" class="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-sm space-y-2">
+          <div class="flex items-start space-x-3">
+            <svg class="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            <div>
+              <div class="font-bold text-amber-300 text-sm mb-0.5">Device Not Authorized</div>
+              <div class="text-xs text-amber-200/80 leading-relaxed">{{ error }}</div>
+            </div>
+          </div>
+          <div class="ml-8 text-xs text-amber-300/70">Please contact your instructor to reset your device registration.</div>
+        </div>
+
+        <!-- Generic Error alert -->
+        <div v-else-if="error" class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm flex items-start space-x-3">
           <svg class="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -32,13 +46,14 @@
         <form @submit.prevent="handleSubmit" class="space-y-5">
           <div>
             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-              Email Address
+              Username
             </label>
             <input
-              v-model="form.email"
-              type="email"
+              v-model="form.username"
+              type="text"
               required
-              placeholder="you@pibmc.edu.kh"
+              autocomplete="username"
+              placeholder="e.g. chan_piseth"
               class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all text-sm"
             />
           </div>
@@ -77,7 +92,7 @@
           <div class="grid grid-cols-2 gap-2.5">
             <button
               type="button"
-              @click="fillDemo('teacher@pibmc.edu.kh', 'password')"
+              @click="fillDemo('teacher_demo', 'password')"
               class="px-3 py-2.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-300 text-xs font-medium text-center transition-colors flex items-center justify-center space-x-1.5"
             >
               <span>🎓</span>
@@ -85,7 +100,7 @@
             </button>
             <button
               type="button"
-              @click="fillDemo('student1@pibmc.edu.kh', 'password')"
+              @click="fillDemo('student_demo', 'password')"
               class="px-3 py-2.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-300 text-xs font-medium text-center transition-colors flex items-center justify-center space-x-1.5"
             >
               <span>📱</span>
@@ -117,15 +132,16 @@ const { login, isTeacher } = useAuth();
 const logoUrl = '/Institute_logo.png';
 
 const form = reactive({
-  email: '',
+  username: '',
   password: '',
 });
 
 const loading = ref(false);
 const error = ref('');
+const isDeviceError = ref(false);
 
-const fillDemo = (email, password) => {
-  form.email = email;
+const fillDemo = (username, password) => {
+  form.username = username;
   form.password = password;
   handleSubmit();
 };
@@ -133,15 +149,25 @@ const fillDemo = (email, password) => {
 const handleSubmit = async () => {
   loading.value = true;
   error.value = '';
+  isDeviceError.value = false;
   try {
-    await login(form.email, form.password);
+    await login(form.username, form.password);
     if (isTeacher.value) {
       router.push('/teacher');
     } else {
       router.push('/student');
     }
   } catch (err) {
-    error.value = err.response?.data?.message || err.message || 'Invalid credentials.';
+    const errMsg = err.response?.data?.errors?.device?.[0]
+      || err.response?.data?.errors?.username?.[0]
+      || err.response?.data?.message
+      || err.message
+      || 'Invalid credentials.';
+    error.value = errMsg;
+    const status = err.response?.status;
+    const lowerMsg = errMsg.toLowerCase();
+    isDeviceError.value = (status === 403 || status === 422)
+      && (lowerMsg.includes('device') || lowerMsg.includes('registered') || lowerMsg.includes('locked'));
   } finally {
     loading.value = false;
   }

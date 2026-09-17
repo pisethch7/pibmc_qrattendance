@@ -17,9 +17,14 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
         'role',
+        'sex',
+        'device_id',
+        'device_name',
+        'device_registered_at',
     ];
 
     protected $hidden = [
@@ -31,8 +36,33 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'device_registered_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isDeviceLocked(): bool
+    {
+        return !empty($this->device_id);
+    }
+
+    public function bindDevice(string $deviceId, ?string $deviceName = null): void
+    {
+        $this->update([
+            'device_id' => $deviceId,
+            'device_name' => $deviceName ?: 'Browser Device',
+            'device_registered_at' => now(),
+        ]);
+    }
+
+    public function resetDevice(): void
+    {
+        $this->update([
+            'device_id' => null,
+            'device_name' => null,
+            'device_registered_at' => null,
+        ]);
+        $this->tokens()->delete();
     }
 
     public function isTeacher(): bool

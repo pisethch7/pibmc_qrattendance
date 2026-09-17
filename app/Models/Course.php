@@ -14,6 +14,7 @@ class Course extends Model
 
     protected $fillable = [
         'teacher_id',
+        'major_id',
         'name',
         'schedule_info',
     ];
@@ -21,6 +22,11 @@ class Course extends Model
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    public function major(): BelongsTo
+    {
+        return $this->belongsTo(Major::class);
     }
 
     public function enrollments(): HasMany

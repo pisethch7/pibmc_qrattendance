@@ -28,6 +28,16 @@ class AttendanceCheckInController extends Controller
             ], 403);
         }
 
+        // Verify request originates from student's registered device
+        if (!empty($user->device_id)) {
+            $requestDeviceId = $request->header('X-Device-Id') ?? $request->input('device_id');
+            if ($requestDeviceId && $requestDeviceId !== $user->device_id) {
+                return response()->json([
+                    'message' => 'Attendance check-in rejected: Must be submitted from your registered device.',
+                ], 403);
+            }
+        }
+
         $validated = $request->validate([
             'token' => ['required', 'string'],
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
